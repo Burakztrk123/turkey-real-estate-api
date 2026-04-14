@@ -19,6 +19,10 @@ app.add_middleware(
 TCMB_API_KEY = "38kL5GlwuQ"
 TCMB_BASE = "https://evds2.tcmb.gov.tr/service/evds"
 
+HEADERS = {
+    "key": TCMB_API_KEY
+}
+
 @app.get("/")
 def root():
     return {
@@ -33,28 +37,28 @@ def root():
         }
     }
 
+async def tcmb_getir(seri: str, baslangic: str, bitis: str):
+    url = f"{TCMB_BASE}/series={seri}&startDate={baslangic}&endDate={bitis}&type=json"
+    async with httpx.AsyncClient(timeout=15, headers=HEADERS) as client:
+        r = await client.get(url)
+        return r.json()
+
 @app.get("/konut-fiyat-endeksi")
 async def konut_fiyat_endeksi(
     baslangic: str = Query("01-01-2023", description="Başlangıç tarihi (gg-aa-yyyy)"),
     bitis: str = Query("01-01-2025", description="Bitiş tarihi (gg-aa-yyyy)")
 ):
-    url = f"{TCMB_BASE}/series=TP.HKFE01&startDate={baslangic}&endDate={bitis}&type=json&key={TCMB_API_KEY}"
     try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url)
-            data = r.json()
-
+        data = await tcmb_getir("TP.HKFE01", baslangic, bitis)
         items = data.get("items", [])
         result = []
         for item in items:
-            tarih = item.get("Tarih", "")
-            deger = item.get("TP_HKFE01", None)
-            if deger:
+            deger = item.get("TP_HKFE01")
+            if deger and deger != "":
                 result.append({
-                    "tarih": tarih,
+                    "tarih": item.get("Tarih"),
                     "konut_fiyat_endeksi": float(deger)
                 })
-
         return {
             "status": "success",
             "source": "TCMB EVDS",
@@ -71,23 +75,17 @@ async def kira_endeksi(
     baslangic: str = Query("01-01-2023", description="Başlangıç tarihi"),
     bitis: str = Query("01-01-2025", description="Bitiş tarihi")
 ):
-    url = f"{TCMB_BASE}/series=TP.HKFE03&startDate={baslangic}&endDate={bitis}&type=json&key={TCMB_API_KEY}"
     try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url)
-            data = r.json()
-
+        data = await tcmb_getir("TP.HKFE03", baslangic, bitis)
         items = data.get("items", [])
         result = []
         for item in items:
-            tarih = item.get("Tarih", "")
-            deger = item.get("TP_HKFE03", None)
-            if deger:
+            deger = item.get("TP_HKFE03")
+            if deger and deger != "":
                 result.append({
-                    "tarih": tarih,
+                    "tarih": item.get("Tarih"),
                     "kira_endeksi": float(deger)
                 })
-
         return {
             "status": "success",
             "source": "TCMB EVDS",
@@ -104,23 +102,17 @@ async def konut_satis(
     baslangic: str = Query("01-01-2023", description="Başlangıç tarihi"),
     bitis: str = Query("01-01-2025", description="Bitiş tarihi")
 ):
-    url = f"{TCMB_BASE}/series=TP.AKONUTSAT01&startDate={baslangic}&endDate={bitis}&type=json&key={TCMB_API_KEY}"
     try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            r = await client.get(url)
-            data = r.json()
-
+        data = await tcmb_getir("TP.AKONUTSAT01", baslangic, bitis)
         items = data.get("items", [])
         result = []
         for item in items:
-            tarih = item.get("Tarih", "")
-            deger = item.get("TP_AKONUTSAT01", None)
-            if deger:
+            deger = item.get("TP_AKONUTSAT01")
+            if deger and deger != "":
                 result.append({
-                    "tarih": tarih,
+                    "tarih": item.get("Tarih"),
                     "konut_satis_adedi": int(float(deger))
                 })
-
         return {
             "status": "success",
             "source": "TCMB EVDS",
@@ -135,22 +127,17 @@ async def konut_satis(
 @app.get("/ozet")
 async def ozet():
     try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            url1 = f"{TCMB_BASE}/series=TP.HKFE01&startDate=01-01-2024&endDate=01-01-2025&type=json&key={TCMB_API_KEY}"
-            url2 = f"{TCMB_BASE}/series=TP.HKFE03&startDate=01-01-2024&endDate=01-01-2025&type=json&key={TCMB_API_KEY}"
-            url3 = f"{TCMB_BASE}/series=TP.AKONUTSAT01&startDate=01-01-2024&endDate=01-01-2025&type=json&key={TCMB_API_KEY}"
+        d1 = await tcmb_getir("TP.HKFE01", "01-01-2024", "01-01-2025")
+        d2 = await tcmb_getir("TP.HKFE03", "01-01-2024", "01-01-2025")
+        d3 = await tcmb_getir("TP.AKONUTSAT01", "01-01-2024", "01-01-2025")
 
-            r1 = await client.get(url1)
-            r2 = await client.get(url2)
-            r3 = await client.get(url3)
+        i1 = d1.get("items", [])
+        i2 = d2.get("items", [])
+        i3 = d3.get("items", [])
 
-        d1 = r1.json().get("items", [])
-        d2 = r2.json().get("items", [])
-        d3 = r3.json().get("items", [])
-
-        son_konut = d1[-1] if d1 else {}
-        son_kira = d2[-1] if d2 else {}
-        son_satis = d3[-1] if d3 else {}
+        son_konut = i1[-1] if i1 else {}
+        son_kira = i2[-1] if i2 else {}
+        son_satis = i3[-1] if i3 else {}
 
         return {
             "status": "success",
