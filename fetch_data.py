@@ -1,6 +1,6 @@
 """
 TCMB EVDS veri çekme scripti.
-GitHub Actions tarafından günlük çalıştırılır ve data/ klasörüne JSON yazar.
+GitHub Actions tarafından haftalık çalıştırılır ve data/ klasörüne JSON yazar.
 
 Kullanım:
     TCMB_API_KEY=your_key python fetch_data.py
@@ -20,136 +20,135 @@ BASE_URL = "https://evds2.tcmb.gov.tr/service/evds"
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
 
-# Kaç aylık veri çekelim (geri dönük)
-GECMIS_AY = 36  # 3 yıl
+GECMIS_AY = 36  # 3 yıl geriye
 
-# TCMB seri kodları
+# TCMB EVDS seri kodları (doğrulanmış)
 SERILER = {
-    # Konut Fiyat Endeksi (2010=100 bazlı)
-    "konut_endeks_genel":    "TP.HKFE01",
-    "konut_endeks_istanbul": "TP.HKFE.A01",
-    "konut_endeks_ankara":   "TP.HKFE.A02",
-    "konut_endeks_izmir":    "TP.HKFE.A03",
-    "konut_endeks_antalya":  "TP.HKFE.A04",
-    "konut_endeks_bursa":    "TP.HKFE.A05",
-    # Yeni konut fiyat endeksi (2017=100)
-    "konut_endeks_yeni":     "TP.KFE.GENEL",
-    # Kira endeksi
-    "kira_endeks":           "TP.FG.J0",
-    # Mortgage faiz oranları (konut kredisi)
-    "mortgage_faiz":         "TP.KKB.MK.TBL.MK",
-    # İnşaat maliyet endeksi
-    "insaat_maliyeti":       "TP.IMALAT05",
+    "konut_endeks_genel":    "TP.HKFE01",   # Konut Fiyat Endeksi - Türkiye
+    "konut_endeks_istanbul": "TP.HKFE02",   # KFE - İstanbul
+    "konut_endeks_ankara":   "TP.HKFE03",   # KFE - Ankara
+    "konut_endeks_izmir":    "TP.HKFE04",   # KFE - İzmir
+    "kira_endeks":           "TP.FG.J0",    # Kira endeksi (TÜFE alt kalemi)
+    "mortgage_faiz":         "TP.KKB08",    # Konut kredisi faiz oranı
+    "insaat_maliyeti":       "TP.YBU01",    # Yurt içi üretici fiyat endeksi (inşaat)
 }
 
 
 def tarih_aralik():
-    """Son GECMIS_AY aylık tarih aralığı döndürür (TCMB formatında)."""
+    """Son GECMIS_AY aylık tarih aralığı (DD-MM-YYYY formatında)."""
     bitis = datetime.now()
     baslangic = bitis - timedelta(days=GECMIS_AY * 30)
     return baslangic.strftime("%d-%m-%Y"), bitis.strftime("%d-%m-%Y")
 
 
-def evds_cek(seri_kodu: str, baslangic: str, bitis: str) -> list[dict]:
-    """Tek bir seri için EVDS'den veri çeker."""
-    params = {
-        "series": seri_kodu,
-        "startDate": baslangic,
-        "endDate": bitis,
-        "type": "json",
-        "key": API_KEY,
-        "frequency": "5",   # 5 = aylık
-        "formulas": "0",    # 0 = seviye (değişim değil)
-        "aggregationTypes": "avg",
-    }
+def evds_cek(seri_kodu: str, baslangic: str, bitis: str) -> list:
+    """
+    TCMB EVDS'den tek bir seri çeker.
+    Doğru URL formatı: /service/evds/series=KOD&startDate=...&key=...
+    (series kodu query param değil, URL path'inin parçası)
+    """
+    url = (
+        f"{BASE_URL}/series={seri_kodu}"
+        f"&startDate={baslangic}"
+        f"&endDate={bitis}"
+        f"&type=json"
+        f"&key={API_KEY}"
+        f"&frequency=5"       # 5 = aylık
+        f"&formulas=0"        # 0 = seviye
+        f"&aggregationTypes=avg"
+    )
     try:
-        r = httpx.get(f"{BASE_URL}/series", params=params, timeout=30)
-        r.raise_for_status()
+        r = httpx.get(url, timeout=30)
+        print(f"  HTTP {r.status_code} | URL: {url[:80]}...")
+        if r.status_code != 200:
+            print(f"  Hata yanıtı: {r.text[:200]}")
+            return []
+
         raw = r.json()
         items = raw.get("items", [])
+        if not items:
+            print(f"  Uyarı: Boş items listesi geldi. Ham yanıt: {str(raw)[:200]}")
+            return []
+
         result = []
         for item in items:
             tarih = item.get("Tarih", "")
+            # Seri değeri key olarak seri kodu kullanılıyor
             deger = item.get(seri_kodu)
             if tarih and deger is not None:
                 try:
                     result.append({
                         "tarih": _tcmb_tarih_cevir(tarih),
-                        "deger": float(deger),
+                        "deger": float(str(deger).replace(",", ".")),
                     })
                 except (ValueError, TypeError):
                     pass
+
         return sorted(result, key=lambda x: x["tarih"])
+
     except Exception as e:
-        print(f"  HATA [{seri_kodu}]: {e}")
+        print(f"  HATA [{seri_kodu}]: {type(e).__name__}: {e}")
         return []
 
 
 def _tcmb_tarih_cevir(tarih_str: str) -> str:
-    """TCMB 'YYYY-MM' formatına çevirir."""
-    # TCMB formatları: "2024-01" veya "2024-01-01"
-    parts = tarih_str.strip().split("-")
-    if len(parts) >= 2:
+    """TCMB tarih formatını 'YYYY-MM' formatına çevirir."""
+    # TCMB formatları: "2024-01" veya "01-2024" veya "2024-01-01"
+    tarih_str = tarih_str.strip()
+    parts = tarih_str.split("-")
+    if len(parts) == 2:
+        if len(parts[0]) == 4:
+            return f"{parts[0]}-{parts[1].zfill(2)}"
+        else:
+            return f"{parts[1]}-{parts[0].zfill(2)}"
+    elif len(parts) >= 3:
         return f"{parts[0]}-{parts[1].zfill(2)}"
     return tarih_str
 
 
-def son_deger_al(liste: list[dict]) -> dict | None:
-    if not liste:
-        return None
-    return liste[-1]
-
-
-def yillik_degisim_hesapla(liste: list[dict]) -> list[dict]:
-    """Her veri noktası için yıllık değişim yüzdesini ekler."""
+def yillik_degisim_ekle(liste: list) -> list:
+    """Her kayda yıllık değişim yüzdesi ekler."""
     tarih_map = {d["tarih"]: d["deger"] for d in liste}
     sonuc = []
     for item in liste:
-        tarih = item["tarih"]
-        yil, ay = tarih.split("-")
-        gecen_yil_tarih = f"{int(yil)-1}-{ay}"
-        gecen_yil_deger = tarih_map.get(gecen_yil_tarih)
-        yillik_degisim = None
-        if gecen_yil_deger and gecen_yil_deger != 0:
-            yillik_degisim = round(
-                (item["deger"] - gecen_yil_deger) / gecen_yil_deger * 100, 2
-            )
-        sonuc.append({**item, "yillik_degisim_yuzde": yillik_degisim})
+        yil, ay = item["tarih"].split("-")
+        gecen_yil = f"{int(yil)-1}-{ay}"
+        gecen_deger = tarih_map.get(gecen_yil)
+        if gecen_deger and gecen_deger != 0:
+            degisim = round((item["deger"] - gecen_deger) / gecen_deger * 100, 2)
+        else:
+            degisim = None
+        sonuc.append({**item, "yillik_degisim_yuzde": degisim})
     return sonuc
 
 
 def main():
     if not API_KEY:
         print("HATA: TCMB_API_KEY ortam değişkeni ayarlanmamış!")
-        print("Alış: https://evds2.tcmb.gov.tr/index.php?/evds/login")
         raise SystemExit(1)
 
     baslangic, bitis = tarih_aralik()
     print(f"Tarih aralığı: {baslangic} → {bitis}")
-    print(f"API key: {API_KEY[:6]}***")
+    print(f"API key: {API_KEY[:6]}***\n")
 
     tum_veri = {}
+    ozet = {}
 
-    # Her seriyi çek
     for isim, kod in SERILER.items():
         print(f"Çekiliyor: {isim} ({kod})...")
         veri = evds_cek(kod, baslangic, bitis)
-        veri = yillik_degisim_hesapla(veri)
+        veri = yillik_degisim_ekle(veri)
         tum_veri[isim] = veri
-        print(f"  → {len(veri)} kayıt")
+        print(f"  → {len(veri)} kayıt\n")
 
-    # Özet istatistikler
-    ozet = {}
-    for isim, veri in tum_veri.items():
-        son = son_deger_al(veri)
-        if son:
+        if veri:
+            son = veri[-1]
             ozet[isim] = {
                 "son_tarih": son["tarih"],
                 "son_deger": son["deger"],
                 "yillik_degisim_yuzde": son.get("yillik_degisim_yuzde"),
             }
 
-    # data/evds_data.json dosyasına yaz
     cikti = {
         "meta": {
             "guncelleme_zamani": datetime.now().isoformat(),
@@ -165,8 +164,13 @@ def main():
     with open(cikti_dosya, "w", encoding="utf-8") as f:
         json.dump(cikti, f, ensure_ascii=False, indent=2)
 
-    print(f"\n✅ Veri kaydedildi: {cikti_dosya}")
-    print(f"   Toplam {sum(len(v) for v in tum_veri.values())} kayıt")
+    toplam = sum(len(v) for v in tum_veri.values())
+    print(f"✅ Kaydedildi: {cikti_dosya}")
+    print(f"   Toplam {toplam} kayıt, {len([v for v in tum_veri.values() if v])} seri başarılı")
+
+    if toplam == 0:
+        print("\n⚠️  Hiç veri gelmedi! Seri kodlarını veya API key'i kontrol et.")
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
