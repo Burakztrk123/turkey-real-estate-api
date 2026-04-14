@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "guncelleme_zamani": "2026-04-14T03:18:01.437266",
+    "veri_kaynagi": "TCMB EVDS",
+    "kaynak_url": "https://evds2.tcmb.gov.tr",
+    "donem": "30-04-2023 - 14-04-2026"
+  },
+  "ozet": {},
+  "seriler": {
+    "konut_endeks_genel": [],
+    "konut_endeks_istanbul": [],
+    "konut_endeks_ankara": [],
+    "konut_endeks_izmir": [],
+    "konut_endeks_antalya": [],
+    "konut_endeks_bursa": [],
+    "konut_endeks_yeni": [],
+    "kira_endeks": [],
+    "mortgage_faiz": [],
+    "insaat_maliyeti": []
+  }
+}
