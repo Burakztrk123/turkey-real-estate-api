@@ -58,16 +58,16 @@ def evds_cek(seri_kodu: str, baslangic: str, bitis: str) -> list:
         f"&aggregationTypes=avg"
     )
     try:
-        r = httpx.get(url, timeout=30)
+        r = httpx.get(url, timeout=30, follow_redirects=True)
         print(f"  HTTP {r.status_code} | URL: {url[:80]}...")
         if r.status_code != 200:
-            print(f"  Hata yanıtı: {r.text[:200]}")
+            print(f"  Hata yanıtı: {r.text[:300]}")
             return []
 
         raw = r.json()
         items = raw.get("items", [])
         if not items:
-            print(f"  Uyarı: Boş items listesi geldi. Ham yanıt: {str(raw)[:200]}")
+            print(f"  Uyarı: Boş items. Ham yanıt: {str(raw)[:300]}")
             return []
 
         result = []
