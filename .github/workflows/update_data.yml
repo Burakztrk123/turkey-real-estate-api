@@ -1,0 +1,46 @@
+name: TCMB Veri Güncelle
+
+on:
+  schedule:
+    # Her Pazar sabahı 03:00 UTC (06:00 TR) çalışır
+    - cron: "0 3 * * 0"
+  # Elle de tetiklenebilir
+  workflow_dispatch:
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # repo'ya commit atmak için
+
+    steps:
+      - name: Repoyu klonla
+        uses: actions/checkout@v4
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bağımlılıkları yükle
+        run: pip install httpx
+
+      - name: TCMB verilerini çek
+        env:
+          TCMB_API_KEY: ${{ secrets.TCMB_API_KEY }}
+        run: python fetch_data.py
+
+      - name: Değişiklikleri commit et
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/evds_data.json
+          # Değişiklik yoksa commit atma
+          if git diff --cached --quiet; then
+            echo "Yeni veri yok, commit atlanıyor."
+          else
+            TARIH=$(date +'%Y-%m-%d')
+            git commit -m "chore: TCMB verileri güncellendi ($TARIH)"
+            git push
+          fi
