@@ -24,20 +24,20 @@ GECMIS_AY = 36  # 3 yıl geriye
 
 # EVDS3 doğrulanmış seri kodları (KFE datagroup: bie_kfe)
 SEHIR_SERI_KODLARI = {
-    "turkiye":  "TP.KFE.TR",
-    "istanbul": "TP.KFE.TR10",
-    "ankara":   "TP.KFE.TR51",
-    "izmir":    "TP.KFE.TR31",
-    "antalya":  "TP.KFE.TR07",  # Antalya ili kodu 07
-    "bursa":    "TP.KFE.TR16",  # Bursa ili kodu 16
-    "adana":    "TP.KFE.TR01",  # Adana ili kodu 01
+    "turkiye":  "TP.KFE.TR",    # Türkiye geneli
+    "istanbul": "TP.KFE.TR10",  # NUTS-2: TR10 = İstanbul
+    "ankara":   "TP.KFE.TR51",  # NUTS-2: TR51 = Ankara
+    "izmir":    "TP.KFE.TR31",  # NUTS-2: TR31 = İzmir
+    "antalya":  "TP.KFE.TR61",  # NUTS-2: TR61 = Antalya-Isparta-Burdur
+    "bursa":    "TP.KFE.TR41",  # NUTS-2: TR41 = Bursa-Eskişehir-Bilecik
+    "adana":    "TP.KFE.TR62",  # NUTS-2: TR62 = Adana-Mersin
 }
 
-# Diğer seri grupları
+# Diğer seri grupları (EVDS3'te doğrulanmış kodlar)
 DIGER_SERILER = {
-    "kira_endeks":      "TP.FG.J0",   # Kira endeksi (TÜFE alt kalemi)
-    "mortgage_faiz":    "TP.KKB08",   # Konut kredisi faiz oranı
-    "insaat_maliyeti":  "TP.YBU01",   # Yurt içi üretici fiyat endeksi
+    "kira_endeks":  "TP.FG.J0",    # Kira endeksi (TÜFE - Kira alt kalemi)
+    # "mortgage_faiz":   "TP.KKB08",  # TODO: EVDS3'te doğru kodu bul
+    # "insaat_maliyeti": "TP.YBU01",  # TODO: EVDS3'te doğru kodu bul
 }
 
 
@@ -122,8 +122,12 @@ def evds3_post(seri_kodlari: list, baslangic: str, bitis: str, formul: str = "0"
 def parse_seri(raw_json: dict, seri_kodu: str) -> list:
     """
     EVDS3 yanıtından belirli bir serinin verilerini çeker.
-    Yanıt formatı: {"items": [{"Tarih": "2024-01", "TP.KFE.TR": "123.45", ...}, ...]}
+    ÖNEMLİ: EVDS3 yanıtta nokta yerine alt çizgi kullanır!
+    Örnek: "TP.KFE.TR" → "TP_KFE_TR" (key adı değişiyor)
+    Yanıt: {"items": [{"Tarih": "2024-01", "TP_KFE_TR": "123.45", ...}]}
     """
+    # EVDS3 response: noktalar alt çizgiye dönüşüyor
+    key = seri_kodu.replace(".", "_")
     items = raw_json.get("items", [])
     if not items:
         return []
@@ -131,10 +135,12 @@ def parse_seri(raw_json: dict, seri_kodu: str) -> list:
     result = []
     for item in items:
         tarih = item.get("Tarih", "")
-        deger_raw = item.get(seri_kodu)
+        deger_raw = item.get(key)
         if tarih and deger_raw is not None:
             try:
-                deger = float(str(deger_raw).replace(",", "."))
+                # Binlik ayırıcı virgülü kaldır: "1,300.60" → 1300.60
+                deger_str = str(deger_raw).replace(",", "")
+                deger = float(deger_str)
                 result.append({
                     "tarih": _normalize_tarih(tarih),
                     "deger": deger,

@@ -1,21 +1,1423 @@
 {
   "meta": {
-    "guncelleme_zamani": "2026-04-14T03:18:01.437266",
-    "veri_kaynagi": "TCMB EVDS",
-    "kaynak_url": "https://evds2.tcmb.gov.tr",
-    "donem": "30-04-2023 - 14-04-2026"
+    "guncelleme_zamani": "2026-04-15T03:57:52.897897",
+    "veri_kaynagi": "TCMB EVDS3",
+    "kaynak_url": "https://evds3.tcmb.gov.tr",
+    "donem": "01-05-2023 - 15-04-2026"
   },
-  "ozet": {},
+  "ozet": {
+    "konut_endeks_turkiye": {
+      "son_tarih": "2026-02",
+      "son_deger": 215.51,
+      "yillik_degisim_yuzde": 26.36
+    },
+    "konut_endeks_istanbul": {
+      "son_tarih": "2026-02",
+      "son_deger": 201.1,
+      "yillik_degisim_yuzde": 27.99
+    },
+    "konut_endeks_ankara": {
+      "son_tarih": "2026-02",
+      "son_deger": 237.22,
+      "yillik_degisim_yuzde": 29.69
+    },
+    "konut_endeks_izmir": {
+      "son_tarih": "2026-02",
+      "son_deger": 208.84,
+      "yillik_degisim_yuzde": 25.82
+    },
+    "konut_endeks_antalya": {
+      "son_tarih": "2026-02",
+      "son_deger": 184.41,
+      "yillik_degisim_yuzde": 27.75
+    },
+    "konut_endeks_bursa": {
+      "son_tarih": "2026-02",
+      "son_deger": 212.15,
+      "yillik_degisim_yuzde": 24.14
+    },
+    "konut_endeks_adana": {
+      "son_tarih": "2026-02",
+      "son_deger": 195.85,
+      "yillik_degisim_yuzde": 23.46
+    },
+    "kira_endeks": {
+      "son_tarih": "2026-01",
+      "son_deger": 3683.83,
+      "yillik_degisim_yuzde": 30.65
+    }
+  },
   "seriler": {
-    "konut_endeks_genel": [],
-    "konut_endeks_istanbul": [],
-    "konut_endeks_ankara": [],
-    "konut_endeks_izmir": [],
-    "konut_endeks_antalya": [],
-    "konut_endeks_bursa": [],
-    "konut_endeks_yeni": [],
-    "kira_endeks": [],
-    "mortgage_faiz": [],
-    "insaat_maliyeti": []
+    "konut_endeks_turkiye": [
+      {
+        "tarih": "2023-05",
+        "deger": 91.12,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-06",
+        "deger": 95.66,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-07",
+        "deger": 101.87,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-08",
+        "deger": 108.97,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-09",
+        "deger": 116.18,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-10",
+        "deger": 119.18,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-11",
+        "deger": 120.07,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-12",
+        "deger": 122.43,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-01",
+        "deger": 125.71,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-02",
+        "deger": 129.87,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-03",
+        "deger": 131.49,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-04",
+        "deger": 132.7,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-05",
+        "deger": 137.9,
+        "yillik_degisim_yuzde": 51.34
+      },
+      {
+        "tarih": "2024-06",
+        "deger": 140.03,
+        "yillik_degisim_yuzde": 46.38
+      },
+      {
+        "tarih": "2024-07",
+        "deger": 141.33,
+        "yillik_degisim_yuzde": 38.74
+      },
+      {
+        "tarih": "2024-08",
+        "deger": 146.5,
+        "yillik_degisim_yuzde": 34.44
+      },
+      {
+        "tarih": "2024-09",
+        "deger": 148.01,
+        "yillik_degisim_yuzde": 27.4
+      },
+      {
+        "tarih": "2024-10",
+        "deger": 151.08,
+        "yillik_degisim_yuzde": 26.77
+      },
+      {
+        "tarih": "2024-11",
+        "deger": 155.38,
+        "yillik_degisim_yuzde": 29.41
+      },
+      {
+        "tarih": "2024-12",
+        "deger": 158.46,
+        "yillik_degisim_yuzde": 29.43
+      },
+      {
+        "tarih": "2025-01",
+        "deger": 165.88,
+        "yillik_degisim_yuzde": 31.95
+      },
+      {
+        "tarih": "2025-02",
+        "deger": 170.55,
+        "yillik_degisim_yuzde": 31.32
+      },
+      {
+        "tarih": "2025-03",
+        "deger": 173.88,
+        "yillik_degisim_yuzde": 32.24
+      },
+      {
+        "tarih": "2025-04",
+        "deger": 176.41,
+        "yillik_degisim_yuzde": 32.94
+      },
+      {
+        "tarih": "2025-05",
+        "deger": 182.33,
+        "yillik_degisim_yuzde": 32.22
+      },
+      {
+        "tarih": "2025-06",
+        "deger": 185.96,
+        "yillik_degisim_yuzde": 32.8
+      },
+      {
+        "tarih": "2025-07",
+        "deger": 187.78,
+        "yillik_degisim_yuzde": 32.87
+      },
+      {
+        "tarih": "2025-08",
+        "deger": 192.44,
+        "yillik_degisim_yuzde": 31.36
+      },
+      {
+        "tarih": "2025-09",
+        "deger": 195.66,
+        "yillik_degisim_yuzde": 32.19
+      },
+      {
+        "tarih": "2025-10",
+        "deger": 198.87,
+        "yillik_degisim_yuzde": 31.63
+      },
+      {
+        "tarih": "2025-11",
+        "deger": 204.04,
+        "yillik_degisim_yuzde": 31.32
+      },
+      {
+        "tarih": "2025-12",
+        "deger": 204.36,
+        "yillik_degisim_yuzde": 28.97
+      },
+      {
+        "tarih": "2026-01",
+        "deger": 211.73,
+        "yillik_degisim_yuzde": 27.64
+      },
+      {
+        "tarih": "2026-02",
+        "deger": 215.51,
+        "yillik_degisim_yuzde": 26.36
+      }
+    ],
+    "konut_endeks_istanbul": [
+      {
+        "tarih": "2023-05",
+        "deger": 93.76,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-06",
+        "deger": 95.83,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-07",
+        "deger": 102.85,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-08",
+        "deger": 108.24,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-09",
+        "deger": 112.98,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-10",
+        "deger": 116.29,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-11",
+        "deger": 115.16,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-12",
+        "deger": 117.48,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-01",
+        "deger": 118.07,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-02",
+        "deger": 122.22,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-03",
+        "deger": 123.26,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-04",
+        "deger": 122.87,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-05",
+        "deger": 127.96,
+        "yillik_degisim_yuzde": 36.48
+      },
+      {
+        "tarih": "2024-06",
+        "deger": 130.58,
+        "yillik_degisim_yuzde": 36.26
+      },
+      {
+        "tarih": "2024-07",
+        "deger": 130.43,
+        "yillik_degisim_yuzde": 26.82
+      },
+      {
+        "tarih": "2024-08",
+        "deger": 137.79,
+        "yillik_degisim_yuzde": 27.3
+      },
+      {
+        "tarih": "2024-09",
+        "deger": 139.42,
+        "yillik_degisim_yuzde": 23.4
+      },
+      {
+        "tarih": "2024-10",
+        "deger": 141.15,
+        "yillik_degisim_yuzde": 21.38
+      },
+      {
+        "tarih": "2024-11",
+        "deger": 145.4,
+        "yillik_degisim_yuzde": 26.26
+      },
+      {
+        "tarih": "2024-12",
+        "deger": 148.57,
+        "yillik_degisim_yuzde": 26.46
+      },
+      {
+        "tarih": "2025-01",
+        "deger": 153.01,
+        "yillik_degisim_yuzde": 29.59
+      },
+      {
+        "tarih": "2025-02",
+        "deger": 157.12,
+        "yillik_degisim_yuzde": 28.56
+      },
+      {
+        "tarih": "2025-03",
+        "deger": 160.77,
+        "yillik_degisim_yuzde": 30.43
+      },
+      {
+        "tarih": "2025-04",
+        "deger": 165.17,
+        "yillik_degisim_yuzde": 34.43
+      },
+      {
+        "tarih": "2025-05",
+        "deger": 169.52,
+        "yillik_degisim_yuzde": 32.48
+      },
+      {
+        "tarih": "2025-06",
+        "deger": 173.13,
+        "yillik_degisim_yuzde": 32.59
+      },
+      {
+        "tarih": "2025-07",
+        "deger": 174.17,
+        "yillik_degisim_yuzde": 33.54
+      },
+      {
+        "tarih": "2025-08",
+        "deger": 179.45,
+        "yillik_degisim_yuzde": 30.23
+      },
+      {
+        "tarih": "2025-09",
+        "deger": 182.07,
+        "yillik_degisim_yuzde": 30.59
+      },
+      {
+        "tarih": "2025-10",
+        "deger": 186.87,
+        "yillik_degisim_yuzde": 32.39
+      },
+      {
+        "tarih": "2025-11",
+        "deger": 191.32,
+        "yillik_degisim_yuzde": 31.58
+      },
+      {
+        "tarih": "2025-12",
+        "deger": 190.92,
+        "yillik_degisim_yuzde": 28.51
+      },
+      {
+        "tarih": "2026-01",
+        "deger": 196.7,
+        "yillik_degisim_yuzde": 28.55
+      },
+      {
+        "tarih": "2026-02",
+        "deger": 201.1,
+        "yillik_degisim_yuzde": 27.99
+      }
+    ],
+    "konut_endeks_ankara": [
+      {
+        "tarih": "2023-05",
+        "deger": 92.39,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-06",
+        "deger": 97.32,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-07",
+        "deger": 103.32,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-08",
+        "deger": 110.9,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-09",
+        "deger": 117.82,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-10",
+        "deger": 119.4,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-11",
+        "deger": 121.52,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-12",
+        "deger": 124.3,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-01",
+        "deger": 129.41,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-02",
+        "deger": 133.33,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-03",
+        "deger": 134.44,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-04",
+        "deger": 135.1,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-05",
+        "deger": 140.91,
+        "yillik_degisim_yuzde": 52.52
+      },
+      {
+        "tarih": "2024-06",
+        "deger": 143.21,
+        "yillik_degisim_yuzde": 47.15
+      },
+      {
+        "tarih": "2024-07",
+        "deger": 144.22,
+        "yillik_degisim_yuzde": 39.59
+      },
+      {
+        "tarih": "2024-08",
+        "deger": 150.39,
+        "yillik_degisim_yuzde": 35.61
+      },
+      {
+        "tarih": "2024-09",
+        "deger": 153.87,
+        "yillik_degisim_yuzde": 30.6
+      },
+      {
+        "tarih": "2024-10",
+        "deger": 158.5,
+        "yillik_degisim_yuzde": 32.75
+      },
+      {
+        "tarih": "2024-11",
+        "deger": 163.84,
+        "yillik_degisim_yuzde": 34.83
+      },
+      {
+        "tarih": "2024-12",
+        "deger": 167.19,
+        "yillik_degisim_yuzde": 34.51
+      },
+      {
+        "tarih": "2025-01",
+        "deger": 177.15,
+        "yillik_degisim_yuzde": 36.89
+      },
+      {
+        "tarih": "2025-02",
+        "deger": 182.92,
+        "yillik_degisim_yuzde": 37.19
+      },
+      {
+        "tarih": "2025-03",
+        "deger": 186.45,
+        "yillik_degisim_yuzde": 38.69
+      },
+      {
+        "tarih": "2025-04",
+        "deger": 191.96,
+        "yillik_degisim_yuzde": 42.09
+      },
+      {
+        "tarih": "2025-05",
+        "deger": 198.92,
+        "yillik_degisim_yuzde": 41.17
+      },
+      {
+        "tarih": "2025-06",
+        "deger": 203.64,
+        "yillik_degisim_yuzde": 42.2
+      },
+      {
+        "tarih": "2025-07",
+        "deger": 206.37,
+        "yillik_degisim_yuzde": 43.09
+      },
+      {
+        "tarih": "2025-08",
+        "deger": 212.28,
+        "yillik_degisim_yuzde": 41.15
+      },
+      {
+        "tarih": "2025-09",
+        "deger": 217.3,
+        "yillik_degisim_yuzde": 41.22
+      },
+      {
+        "tarih": "2025-10",
+        "deger": 219.37,
+        "yillik_degisim_yuzde": 38.4
+      },
+      {
+        "tarih": "2025-11",
+        "deger": 225.94,
+        "yillik_degisim_yuzde": 37.9
+      },
+      {
+        "tarih": "2025-12",
+        "deger": 225.46,
+        "yillik_degisim_yuzde": 34.85
+      },
+      {
+        "tarih": "2026-01",
+        "deger": 233.3,
+        "yillik_degisim_yuzde": 31.7
+      },
+      {
+        "tarih": "2026-02",
+        "deger": 237.22,
+        "yillik_degisim_yuzde": 29.69
+      }
+    ],
+    "konut_endeks_izmir": [
+      {
+        "tarih": "2023-05",
+        "deger": 91.63,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-06",
+        "deger": 97.62,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-07",
+        "deger": 101.32,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-08",
+        "deger": 106.85,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-09",
+        "deger": 115.76,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-10",
+        "deger": 115.8,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-11",
+        "deger": 119.78,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-12",
+        "deger": 121.61,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-01",
+        "deger": 123.25,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-02",
+        "deger": 124.9,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-03",
+        "deger": 130.02,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-04",
+        "deger": 131.98,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-05",
+        "deger": 135.59,
+        "yillik_degisim_yuzde": 47.98
+      },
+      {
+        "tarih": "2024-06",
+        "deger": 139.11,
+        "yillik_degisim_yuzde": 42.5
+      },
+      {
+        "tarih": "2024-07",
+        "deger": 138.75,
+        "yillik_degisim_yuzde": 36.94
+      },
+      {
+        "tarih": "2024-08",
+        "deger": 141.44,
+        "yillik_degisim_yuzde": 32.37
+      },
+      {
+        "tarih": "2024-09",
+        "deger": 142.58,
+        "yillik_degisim_yuzde": 23.17
+      },
+      {
+        "tarih": "2024-10",
+        "deger": 148.98,
+        "yillik_degisim_yuzde": 28.65
+      },
+      {
+        "tarih": "2024-11",
+        "deger": 151.63,
+        "yillik_degisim_yuzde": 26.59
+      },
+      {
+        "tarih": "2024-12",
+        "deger": 152.32,
+        "yillik_degisim_yuzde": 25.25
+      },
+      {
+        "tarih": "2025-01",
+        "deger": 159.77,
+        "yillik_degisim_yuzde": 29.63
+      },
+      {
+        "tarih": "2025-02",
+        "deger": 165.98,
+        "yillik_degisim_yuzde": 32.89
+      },
+      {
+        "tarih": "2025-03",
+        "deger": 172.42,
+        "yillik_degisim_yuzde": 32.61
+      },
+      {
+        "tarih": "2025-04",
+        "deger": 172.47,
+        "yillik_degisim_yuzde": 30.68
+      },
+      {
+        "tarih": "2025-05",
+        "deger": 177.77,
+        "yillik_degisim_yuzde": 31.11
+      },
+      {
+        "tarih": "2025-06",
+        "deger": 183.62,
+        "yillik_degisim_yuzde": 32.0
+      },
+      {
+        "tarih": "2025-07",
+        "deger": 181.93,
+        "yillik_degisim_yuzde": 31.12
+      },
+      {
+        "tarih": "2025-08",
+        "deger": 186.14,
+        "yillik_degisim_yuzde": 31.6
+      },
+      {
+        "tarih": "2025-09",
+        "deger": 191.3,
+        "yillik_degisim_yuzde": 34.17
+      },
+      {
+        "tarih": "2025-10",
+        "deger": 194.95,
+        "yillik_degisim_yuzde": 30.86
+      },
+      {
+        "tarih": "2025-11",
+        "deger": 199.43,
+        "yillik_degisim_yuzde": 31.52
+      },
+      {
+        "tarih": "2025-12",
+        "deger": 198.84,
+        "yillik_degisim_yuzde": 30.54
+      },
+      {
+        "tarih": "2026-01",
+        "deger": 205.92,
+        "yillik_degisim_yuzde": 28.89
+      },
+      {
+        "tarih": "2026-02",
+        "deger": 208.84,
+        "yillik_degisim_yuzde": 25.82
+      }
+    ],
+    "konut_endeks_antalya": [
+      {
+        "tarih": "2023-05",
+        "deger": 92.77,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-06",
+        "deger": 98.12,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-07",
+        "deger": 101.59,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-08",
+        "deger": 109.2,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-09",
+        "deger": 115.77,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-10",
+        "deger": 117.93,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-11",
+        "deger": 117.7,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-12",
+        "deger": 117.61,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-01",
+        "deger": 125.0,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-02",
+        "deger": 122.12,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-03",
+        "deger": 125.63,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-04",
+        "deger": 119.46,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-05",
+        "deger": 130.53,
+        "yillik_degisim_yuzde": 40.7
+      },
+      {
+        "tarih": "2024-06",
+        "deger": 127.11,
+        "yillik_degisim_yuzde": 29.55
+      },
+      {
+        "tarih": "2024-07",
+        "deger": 132.11,
+        "yillik_degisim_yuzde": 30.04
+      },
+      {
+        "tarih": "2024-08",
+        "deger": 132.02,
+        "yillik_degisim_yuzde": 20.9
+      },
+      {
+        "tarih": "2024-09",
+        "deger": 131.39,
+        "yillik_degisim_yuzde": 13.49
+      },
+      {
+        "tarih": "2024-10",
+        "deger": 132.65,
+        "yillik_degisim_yuzde": 12.48
+      },
+      {
+        "tarih": "2024-11",
+        "deger": 134.81,
+        "yillik_degisim_yuzde": 14.54
+      },
+      {
+        "tarih": "2024-12",
+        "deger": 137.02,
+        "yillik_degisim_yuzde": 16.5
+      },
+      {
+        "tarih": "2025-01",
+        "deger": 143.72,
+        "yillik_degisim_yuzde": 14.98
+      },
+      {
+        "tarih": "2025-02",
+        "deger": 144.35,
+        "yillik_degisim_yuzde": 18.2
+      },
+      {
+        "tarih": "2025-03",
+        "deger": 149.66,
+        "yillik_degisim_yuzde": 19.13
+      },
+      {
+        "tarih": "2025-04",
+        "deger": 153.35,
+        "yillik_degisim_yuzde": 28.37
+      },
+      {
+        "tarih": "2025-05",
+        "deger": 155.6,
+        "yillik_degisim_yuzde": 19.21
+      },
+      {
+        "tarih": "2025-06",
+        "deger": 159.16,
+        "yillik_degisim_yuzde": 25.21
+      },
+      {
+        "tarih": "2025-07",
+        "deger": 157.85,
+        "yillik_degisim_yuzde": 19.48
+      },
+      {
+        "tarih": "2025-08",
+        "deger": 164.47,
+        "yillik_degisim_yuzde": 24.58
+      },
+      {
+        "tarih": "2025-09",
+        "deger": 167.58,
+        "yillik_degisim_yuzde": 27.54
+      },
+      {
+        "tarih": "2025-10",
+        "deger": 165.82,
+        "yillik_degisim_yuzde": 25.01
+      },
+      {
+        "tarih": "2025-11",
+        "deger": 171.04,
+        "yillik_degisim_yuzde": 26.87
+      },
+      {
+        "tarih": "2025-12",
+        "deger": 170.19,
+        "yillik_degisim_yuzde": 24.21
+      },
+      {
+        "tarih": "2026-01",
+        "deger": 177.79,
+        "yillik_degisim_yuzde": 23.71
+      },
+      {
+        "tarih": "2026-02",
+        "deger": 184.41,
+        "yillik_degisim_yuzde": 27.75
+      }
+    ],
+    "konut_endeks_bursa": [
+      {
+        "tarih": "2023-05",
+        "deger": 91.06,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-06",
+        "deger": 94.64,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-07",
+        "deger": 102.25,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-08",
+        "deger": 110.47,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-09",
+        "deger": 116.34,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-10",
+        "deger": 120.71,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-11",
+        "deger": 119.87,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-12",
+        "deger": 123.3,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-01",
+        "deger": 128.7,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-02",
+        "deger": 133.92,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-03",
+        "deger": 133.21,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-04",
+        "deger": 134.01,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-05",
+        "deger": 139.6,
+        "yillik_degisim_yuzde": 53.31
+      },
+      {
+        "tarih": "2024-06",
+        "deger": 140.87,
+        "yillik_degisim_yuzde": 48.85
+      },
+      {
+        "tarih": "2024-07",
+        "deger": 140.69,
+        "yillik_degisim_yuzde": 37.59
+      },
+      {
+        "tarih": "2024-08",
+        "deger": 146.89,
+        "yillik_degisim_yuzde": 32.97
+      },
+      {
+        "tarih": "2024-09",
+        "deger": 147.36,
+        "yillik_degisim_yuzde": 26.66
+      },
+      {
+        "tarih": "2024-10",
+        "deger": 151.92,
+        "yillik_degisim_yuzde": 25.86
+      },
+      {
+        "tarih": "2024-11",
+        "deger": 154.31,
+        "yillik_degisim_yuzde": 28.73
+      },
+      {
+        "tarih": "2024-12",
+        "deger": 158.73,
+        "yillik_degisim_yuzde": 28.73
+      },
+      {
+        "tarih": "2025-01",
+        "deger": 167.7,
+        "yillik_degisim_yuzde": 30.3
+      },
+      {
+        "tarih": "2025-02",
+        "deger": 170.9,
+        "yillik_degisim_yuzde": 27.61
+      },
+      {
+        "tarih": "2025-03",
+        "deger": 173.43,
+        "yillik_degisim_yuzde": 30.19
+      },
+      {
+        "tarih": "2025-04",
+        "deger": 174.37,
+        "yillik_degisim_yuzde": 30.12
+      },
+      {
+        "tarih": "2025-05",
+        "deger": 183.35,
+        "yillik_degisim_yuzde": 31.34
+      },
+      {
+        "tarih": "2025-06",
+        "deger": 183.02,
+        "yillik_degisim_yuzde": 29.92
+      },
+      {
+        "tarih": "2025-07",
+        "deger": 186.97,
+        "yillik_degisim_yuzde": 32.9
+      },
+      {
+        "tarih": "2025-08",
+        "deger": 191.48,
+        "yillik_degisim_yuzde": 30.36
+      },
+      {
+        "tarih": "2025-09",
+        "deger": 194.35,
+        "yillik_degisim_yuzde": 31.89
+      },
+      {
+        "tarih": "2025-10",
+        "deger": 198.43,
+        "yillik_degisim_yuzde": 30.61
+      },
+      {
+        "tarih": "2025-11",
+        "deger": 201.02,
+        "yillik_degisim_yuzde": 30.27
+      },
+      {
+        "tarih": "2025-12",
+        "deger": 203.04,
+        "yillik_degisim_yuzde": 27.92
+      },
+      {
+        "tarih": "2026-01",
+        "deger": 209.99,
+        "yillik_degisim_yuzde": 25.22
+      },
+      {
+        "tarih": "2026-02",
+        "deger": 212.15,
+        "yillik_degisim_yuzde": 24.14
+      }
+    ],
+    "konut_endeks_adana": [
+      {
+        "tarih": "2023-05",
+        "deger": 92.37,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-06",
+        "deger": 98.09,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-07",
+        "deger": 103.02,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-08",
+        "deger": 107.27,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-09",
+        "deger": 114.23,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-10",
+        "deger": 113.95,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-11",
+        "deger": 118.38,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-12",
+        "deger": 115.29,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-01",
+        "deger": 118.84,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-02",
+        "deger": 123.96,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-03",
+        "deger": 122.3,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-04",
+        "deger": 126.59,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-05",
+        "deger": 130.23,
+        "yillik_degisim_yuzde": 40.99
+      },
+      {
+        "tarih": "2024-06",
+        "deger": 134.2,
+        "yillik_degisim_yuzde": 36.81
+      },
+      {
+        "tarih": "2024-07",
+        "deger": 134.02,
+        "yillik_degisim_yuzde": 30.09
+      },
+      {
+        "tarih": "2024-08",
+        "deger": 137.89,
+        "yillik_degisim_yuzde": 28.54
+      },
+      {
+        "tarih": "2024-09",
+        "deger": 141.86,
+        "yillik_degisim_yuzde": 24.19
+      },
+      {
+        "tarih": "2024-10",
+        "deger": 143.24,
+        "yillik_degisim_yuzde": 25.7
+      },
+      {
+        "tarih": "2024-11",
+        "deger": 147.48,
+        "yillik_degisim_yuzde": 24.58
+      },
+      {
+        "tarih": "2024-12",
+        "deger": 148.08,
+        "yillik_degisim_yuzde": 28.44
+      },
+      {
+        "tarih": "2025-01",
+        "deger": 155.0,
+        "yillik_degisim_yuzde": 30.43
+      },
+      {
+        "tarih": "2025-02",
+        "deger": 158.64,
+        "yillik_degisim_yuzde": 27.98
+      },
+      {
+        "tarih": "2025-03",
+        "deger": 161.45,
+        "yillik_degisim_yuzde": 32.01
+      },
+      {
+        "tarih": "2025-04",
+        "deger": 162.47,
+        "yillik_degisim_yuzde": 28.34
+      },
+      {
+        "tarih": "2025-05",
+        "deger": 171.51,
+        "yillik_degisim_yuzde": 31.7
+      },
+      {
+        "tarih": "2025-06",
+        "deger": 175.33,
+        "yillik_degisim_yuzde": 30.65
+      },
+      {
+        "tarih": "2025-07",
+        "deger": 172.38,
+        "yillik_degisim_yuzde": 28.62
+      },
+      {
+        "tarih": "2025-08",
+        "deger": 178.93,
+        "yillik_degisim_yuzde": 29.76
+      },
+      {
+        "tarih": "2025-09",
+        "deger": 181.33,
+        "yillik_degisim_yuzde": 27.82
+      },
+      {
+        "tarih": "2025-10",
+        "deger": 186.26,
+        "yillik_degisim_yuzde": 30.03
+      },
+      {
+        "tarih": "2025-11",
+        "deger": 188.06,
+        "yillik_degisim_yuzde": 27.52
+      },
+      {
+        "tarih": "2025-12",
+        "deger": 190.74,
+        "yillik_degisim_yuzde": 28.81
+      },
+      {
+        "tarih": "2026-01",
+        "deger": 194.43,
+        "yillik_degisim_yuzde": 25.44
+      },
+      {
+        "tarih": "2026-02",
+        "deger": 195.85,
+        "yillik_degisim_yuzde": 23.46
+      }
+    ],
+    "kira_endeks": [
+      {
+        "tarih": "2023-05",
+        "deger": 1300.6,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-06",
+        "deger": 1351.59,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-07",
+        "deger": 1479.84,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-08",
+        "deger": 1614.31,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-09",
+        "deger": 1691.04,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-10",
+        "deger": 1749.11,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-11",
+        "deger": 1806.5,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2023-12",
+        "deger": 1859.38,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-01",
+        "deger": 1984.02,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-02",
+        "deger": 2073.88,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-03",
+        "deger": 2139.47,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-04",
+        "deger": 2207.5,
+        "yillik_degisim_yuzde": null
+      },
+      {
+        "tarih": "2024-05",
+        "deger": 2281.85,
+        "yillik_degisim_yuzde": 75.45
+      },
+      {
+        "tarih": "2024-06",
+        "deger": 2319.29,
+        "yillik_degisim_yuzde": 71.6
+      },
+      {
+        "tarih": "2024-07",
+        "deger": 2394.1,
+        "yillik_degisim_yuzde": 61.78
+      },
+      {
+        "tarih": "2024-08",
+        "deger": 2453.34,
+        "yillik_degisim_yuzde": 51.97
+      },
+      {
+        "tarih": "2024-09",
+        "deger": 2526.16,
+        "yillik_degisim_yuzde": 49.38
+      },
+      {
+        "tarih": "2024-10",
+        "deger": 2598.91,
+        "yillik_degisim_yuzde": 48.58
+      },
+      {
+        "tarih": "2024-11",
+        "deger": 2657.23,
+        "yillik_degisim_yuzde": 47.09
+      },
+      {
+        "tarih": "2024-12",
+        "deger": 2684.55,
+        "yillik_degisim_yuzde": 44.38
+      },
+      {
+        "tarih": "2025-01",
+        "deger": 2819.65,
+        "yillik_degisim_yuzde": 42.12
+      },
+      {
+        "tarih": "2025-02",
+        "deger": 2883.75,
+        "yillik_degisim_yuzde": 39.05
+      },
+      {
+        "tarih": "2025-03",
+        "deger": 2954.69,
+        "yillik_degisim_yuzde": 38.1
+      },
+      {
+        "tarih": "2025-04",
+        "deger": 3043.23,
+        "yillik_degisim_yuzde": 37.86
+      },
+      {
+        "tarih": "2025-05",
+        "deger": 3089.74,
+        "yillik_degisim_yuzde": 35.41
+      },
+      {
+        "tarih": "2025-06",
+        "deger": 3132.17,
+        "yillik_degisim_yuzde": 35.05
+      },
+      {
+        "tarih": "2025-07",
+        "deger": 3196.66,
+        "yillik_degisim_yuzde": 33.52
+      },
+      {
+        "tarih": "2025-08",
+        "deger": 3261.72,
+        "yillik_degisim_yuzde": 32.95
+      },
+      {
+        "tarih": "2025-09",
+        "deger": 3367.22,
+        "yillik_degisim_yuzde": 33.29
+      },
+      {
+        "tarih": "2025-10",
+        "deger": 3453.09,
+        "yillik_degisim_yuzde": 32.87
+      },
+      {
+        "tarih": "2025-11",
+        "deger": 3482.96,
+        "yillik_degisim_yuzde": 31.07
+      },
+      {
+        "tarih": "2025-12",
+        "deger": 3513.87,
+        "yillik_degisim_yuzde": 30.89
+      },
+      {
+        "tarih": "2026-01",
+        "deger": 3683.83,
+        "yillik_degisim_yuzde": 30.65
+      }
+    ]
   }
 }
