@@ -160,7 +160,7 @@ def konut_fiyat_endeksi(
     """TCMB Konut Fiyat Endeksi — Türkiye geneli aylık seri."""
     evds = _evds_yukle()
     if evds:
-        seri = evds["seriler"].get("konut_endeks_yeni") or evds["seriler"].get("konut_endeks_genel", [])
+        seri = evds["seriler"].get("konut_endeks_turkiye", [])
         data = _filtrele(seri, baslangic, bitis)
         kaynak = "TCMB EVDS (otomatik güncelleme)"
         guncelleme = evds["meta"]["guncelleme_zamani"]
@@ -270,6 +270,7 @@ def sehir_endeksleri(
         "izmir":    "konut_endeks_izmir",
         "antalya":  "konut_endeks_antalya",
         "bursa":    "konut_endeks_bursa",
+        "adana":    "konut_endeks_adana",
     }
     sehir = sehir.lower()
     if sehir not in seri_map:
