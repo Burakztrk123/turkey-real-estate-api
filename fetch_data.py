@@ -1,11 +1,11 @@
 """
-TCMB EVDS veri çekme scripti.
-GitHub Actions tarafından haftalık çalıştırılır ve data/ klasörüne JSON yazar.
+TCMB EVDS3 veri çekme scripti.
+Doğru endpoint: POST https://evds3.tcmb.gov.tr/igmevdsms-dis/fe
 
 Kullanım:
     TCMB_API_KEY=your_key python fetch_data.py
 
-TCMB EVDS API key almak için: https://evds2.tcmb.gov.tr/index.php?/evds/login
+API key almak için: https://evds3.tcmb.gov.tr
 """
 
 import httpx
@@ -16,21 +16,28 @@ from pathlib import Path
 
 # --- Konfigürasyon ---
 API_KEY = os.environ.get("TCMB_API_KEY", "")
-BASE_URL = "https://evds2.tcmb.gov.tr/service/evds"
+BASE_URL = "https://evds3.tcmb.gov.tr/igmevdsms-dis"
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
 
 GECMIS_AY = 36  # 3 yıl geriye
 
-# TCMB EVDS seri kodları (doğrulanmış)
-SERILER = {
-    "konut_endeks_genel":    "TP.HKFE01",   # Konut Fiyat Endeksi - Türkiye
-    "konut_endeks_istanbul": "TP.HKFE02",   # KFE - İstanbul
-    "konut_endeks_ankara":   "TP.HKFE03",   # KFE - Ankara
-    "konut_endeks_izmir":    "TP.HKFE04",   # KFE - İzmir
-    "kira_endeks":           "TP.FG.J0",    # Kira endeksi (TÜFE alt kalemi)
-    "mortgage_faiz":         "TP.KKB08",    # Konut kredisi faiz oranı
-    "insaat_maliyeti":       "TP.YBU01",    # Yurt içi üretici fiyat endeksi (inşaat)
+# EVDS3 doğrulanmış seri kodları (KFE datagroup: bie_kfe)
+SEHIR_SERI_KODLARI = {
+    "turkiye":  "TP.KFE.TR",
+    "istanbul": "TP.KFE.TR10",
+    "ankara":   "TP.KFE.TR51",
+    "izmir":    "TP.KFE.TR31",
+    "antalya":  "TP.KFE.TR07",  # Antalya ili kodu 07
+    "bursa":    "TP.KFE.TR16",  # Bursa ili kodu 16
+    "adana":    "TP.KFE.TR01",  # Adana ili kodu 01
+}
+
+# Diğer seri grupları
+DIGER_SERILER = {
+    "kira_endeks":      "TP.FG.J0",   # Kira endeksi (TÜFE alt kalemi)
+    "mortgage_faiz":    "TP.KKB08",   # Konut kredisi faiz oranı
+    "insaat_maliyeti":  "TP.YBU01",   # Yurt içi üretici fiyat endeksi
 }
 
 
@@ -41,59 +48,105 @@ def tarih_aralik():
     return baslangic.strftime("%d-%m-%Y"), bitis.strftime("%d-%m-%Y")
 
 
-def evds_cek(seri_kodu: str, baslangic: str, bitis: str) -> list:
+def evds3_post(seri_kodlari: list, baslangic: str, bitis: str, formul: str = "0") -> dict:
     """
-    TCMB EVDS'den tek bir seri çeker.
-    Doğru URL formatı: /service/evds/series=KOD&startDate=...&key=...
-    (series kodu query param değil, URL path'inin parçası)
+    TCMB EVDS3 POST /fe endpoint'ine istek atar.
+
+    Birden fazla seri için: seri_kodlari = ["TP.KFE.TR", "TP.KFE.TR10", ...]
+
+    Payload formatı (Network sekmesinden yakalandı - 200 OK):
+    - series: "-" ile birleştirilmiş seri kodları
+    - aggregationTypes: her seri için "avg-avg-avg"
+    - formulas: her seri için "0-0-0" (0=seviye, 1=yüzde değ, 3=yıllık değ)
+    - frequency: "5" (string, aylık)
+    - decimal: "2" (string)
+    - dateFormat: "0" (ZORUNLU, eksik olunca 500 hatası)
+    - isRaporSayfasi: true (ZORUNLU, eksik olunca 500 hatası)
+    - groupSeperator: true
+    - lang: "tr" (küçük harf)
     """
-    url = (
-        f"{BASE_URL}/series={seri_kodu}"
-        f"&startDate={baslangic}"
-        f"&endDate={bitis}"
-        f"&type=json"
-        f"&key={API_KEY}"
-        f"&frequency=5"       # 5 = aylık
-        f"&formulas=0"        # 0 = seviye
-        f"&aggregationTypes=avg"
-    )
+    n = len(seri_kodlari)
+    series_str = "-".join(seri_kodlari)
+    aggregation_str = "-".join(["avg"] * n)
+    formulas_str = "-".join([formul] * n)
+
+    body = {
+        "type": "json",
+        "series": series_str,
+        "aggregationTypes": aggregation_str,
+        "formulas": formulas_str,
+        "startDate": baslangic,
+        "endDate": bitis,
+        "frequency": "5",           # string, aylık
+        "decimal": "2",             # string
+        "decimalSeperator": ".",
+        "dateFormat": "0",          # KRİTİK: eksik olunca 500 hatası
+        "groupSeperator": True,
+        "isRaporSayfasi": True,     # KRİTİK: eksik olunca 500 hatası
+        "lang": "tr",               # küçük harf
+        "ozelFormuller": [],
+    }
+
+    headers = {
+        "Content-Type": "application/json",
+        "key": API_KEY,
+    }
+
+    url = f"{BASE_URL}/fe"
     try:
-        r = httpx.get(url, timeout=30, follow_redirects=True)
-        print(f"  HTTP {r.status_code} | URL: {url[:80]}...")
+        r = httpx.post(
+            url,
+            json=body,
+            headers=headers,
+            timeout=30,
+            follow_redirects=True,
+        )
+        print(f"  HTTP {r.status_code} | Content-Type: {r.headers.get('content-type', '?')}")
+        print(f"  Yanıt (ilk 400 karakter): {r.text[:400]}")
+
         if r.status_code != 200:
-            print(f"  Hata yanıtı: {r.text[:300]}")
-            return []
+            print(f"  HATA: Sunucu {r.status_code} döndürdü")
+            return {}
 
-        raw = r.json()
-        items = raw.get("items", [])
-        if not items:
-            print(f"  Uyarı: Boş items. Ham yanıt: {str(raw)[:300]}")
-            return []
+        if not r.text.strip():
+            print("  Boş yanıt!")
+            return {}
 
-        result = []
-        for item in items:
-            tarih = item.get("Tarih", "")
-            # Seri değeri key olarak seri kodu kullanılıyor
-            deger = item.get(seri_kodu)
-            if tarih and deger is not None:
-                try:
-                    result.append({
-                        "tarih": _tcmb_tarih_cevir(tarih),
-                        "deger": float(str(deger).replace(",", ".")),
-                    })
-                except (ValueError, TypeError):
-                    pass
-
-        return sorted(result, key=lambda x: x["tarih"])
+        return r.json()
 
     except Exception as e:
-        print(f"  HATA [{seri_kodu}]: {type(e).__name__}: {e}")
+        print(f"  HATA: {type(e).__name__}: {e}")
+        return {}
+
+
+def parse_seri(raw_json: dict, seri_kodu: str) -> list:
+    """
+    EVDS3 yanıtından belirli bir serinin verilerini çeker.
+    Yanıt formatı: {"items": [{"Tarih": "2024-01", "TP.KFE.TR": "123.45", ...}, ...]}
+    """
+    items = raw_json.get("items", [])
+    if not items:
         return []
 
+    result = []
+    for item in items:
+        tarih = item.get("Tarih", "")
+        deger_raw = item.get(seri_kodu)
+        if tarih and deger_raw is not None:
+            try:
+                deger = float(str(deger_raw).replace(",", "."))
+                result.append({
+                    "tarih": _normalize_tarih(tarih),
+                    "deger": deger,
+                })
+            except (ValueError, TypeError):
+                pass
 
-def _tcmb_tarih_cevir(tarih_str: str) -> str:
+    return sorted(result, key=lambda x: x["tarih"])
+
+
+def _normalize_tarih(tarih_str: str) -> str:
     """TCMB tarih formatını 'YYYY-MM' formatına çevirir."""
-    # TCMB formatları: "2024-01" veya "01-2024" veya "2024-01-01"
     tarih_str = tarih_str.strip()
     parts = tarih_str.split("-")
     if len(parts) == 2:
@@ -111,12 +164,15 @@ def yillik_degisim_ekle(liste: list) -> list:
     tarih_map = {d["tarih"]: d["deger"] for d in liste}
     sonuc = []
     for item in liste:
-        yil, ay = item["tarih"].split("-")
-        gecen_yil = f"{int(yil)-1}-{ay}"
-        gecen_deger = tarih_map.get(gecen_yil)
-        if gecen_deger and gecen_deger != 0:
-            degisim = round((item["deger"] - gecen_deger) / gecen_deger * 100, 2)
-        else:
+        try:
+            yil, ay = item["tarih"].split("-")
+            gecen_yil = f"{int(yil)-1}-{ay}"
+            gecen_deger = tarih_map.get(gecen_yil)
+            if gecen_deger and gecen_deger != 0:
+                degisim = round((item["deger"] - gecen_deger) / gecen_deger * 100, 2)
+            else:
+                degisim = None
+        except Exception:
             degisim = None
         sonuc.append({**item, "yillik_degisim_yuzde": degisim})
     return sonuc
@@ -129,18 +185,40 @@ def main():
 
     baslangic, bitis = tarih_aralik()
     print(f"Tarih aralığı: {baslangic} → {bitis}")
-    print(f"API key: {API_KEY[:6]}***\n")
+    print(f"API key: {API_KEY[:4]}***\n")
 
     tum_veri = {}
     ozet = {}
 
-    for isim, kod in SERILER.items():
-        print(f"Çekiliyor: {isim} ({kod})...")
-        veri = evds_cek(kod, baslangic, bitis)
+    # --- 1. Konut Fiyat Endeksi (tüm şehirler, tek POST) ---
+    print("=" * 50)
+    print("Konut Fiyat Endeksi çekiliyor (tüm şehirler)...")
+    sehir_kodlari = list(SEHIR_SERI_KODLARI.values())
+    kfe_raw = evds3_post(sehir_kodlari, baslangic, bitis, formul="0")
+
+    for sehir_adi, seri_kodu in SEHIR_SERI_KODLARI.items():
+        veri = parse_seri(kfe_raw, seri_kodu)
+        veri = yillik_degisim_ekle(veri)
+        isim = f"konut_endeks_{sehir_adi}"
+        tum_veri[isim] = veri
+        print(f"  {sehir_adi}: {len(veri)} kayıt")
+        if veri:
+            son = veri[-1]
+            ozet[isim] = {
+                "son_tarih": son["tarih"],
+                "son_deger": son["deger"],
+                "yillik_degisim_yuzde": son.get("yillik_degisim_yuzde"),
+            }
+    print()
+
+    # --- 2. Diğer seriler (her biri ayrı POST) ---
+    for isim, seri_kodu in DIGER_SERILER.items():
+        print(f"Çekiliyor: {isim} ({seri_kodu})...")
+        raw = evds3_post([seri_kodu], baslangic, bitis, formul="0")
+        veri = parse_seri(raw, seri_kodu)
         veri = yillik_degisim_ekle(veri)
         tum_veri[isim] = veri
         print(f"  → {len(veri)} kayıt\n")
-
         if veri:
             son = veri[-1]
             ozet[isim] = {
@@ -149,11 +227,12 @@ def main():
                 "yillik_degisim_yuzde": son.get("yillik_degisim_yuzde"),
             }
 
+    # --- Çıktı ---
     cikti = {
         "meta": {
             "guncelleme_zamani": datetime.now().isoformat(),
-            "veri_kaynagi": "TCMB EVDS",
-            "kaynak_url": "https://evds2.tcmb.gov.tr",
+            "veri_kaynagi": "TCMB EVDS3",
+            "kaynak_url": "https://evds3.tcmb.gov.tr",
             "donem": f"{baslangic} - {bitis}",
         },
         "ozet": ozet,
@@ -165,11 +244,13 @@ def main():
         json.dump(cikti, f, ensure_ascii=False, indent=2)
 
     toplam = sum(len(v) for v in tum_veri.values())
+    basarili = len([v for v in tum_veri.values() if v])
+    print(f"\n{'=' * 50}")
     print(f"✅ Kaydedildi: {cikti_dosya}")
-    print(f"   Toplam {toplam} kayıt, {len([v for v in tum_veri.values() if v])} seri başarılı")
+    print(f"   Toplam {toplam} kayıt, {basarili}/{len(tum_veri)} seri başarılı")
 
     if toplam == 0:
-        print("\n⚠️  Hiç veri gelmedi! Seri kodlarını veya API key'i kontrol et.")
+        print("\n⚠️  Hiç veri gelmedi! API key veya seri kodlarını kontrol et.")
         raise SystemExit(1)
 
 
