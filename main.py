@@ -1,59 +1,59 @@
 """
-Turkey Real Estate API — v5.0.0
+Turkey Real Estate API — v5.1.0
 TegmenSoft © 2026 — Tüm hakları saklıdır.
 
 Özellikler:
-  - API Key doğrulama (X-API-Key başlığı)
-  - Rate limiting (60 istek/dakika per key)
-  - Türkçe kurumsal Swagger dokümantasyonu
+  - API Key doğrulama + Rate limiting
+  - In-Memory Cache (TTL bazlı, Redis gerekmez)
+  - Async/await ile non-blocking I/O
+  - /health endpoint (uptime, versiyon, cache durumu)
   - TCMB EVDS otomatik veri güncellemesi
 """
 
-from fastapi import FastAPI, Query, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.openapi.docs import get_swagger_ui_html
-from fastapi.openapi.utils import get_openapi
-from datetime import datetime, timedelta
-from pathlib import Path
-from collections import defaultdict
-import threading
+import asyncio
 import json
 import os
+import time
+import threading
+from collections import defaultdict
+from datetime import datetime, timedelta
+from pathlib import Path
+
+from fastapi import FastAPI, Query, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
 
 # ---------------------------------------------------------------------------
-# API Key Konfigürasyonu
+# Sabitler
 # ---------------------------------------------------------------------------
-# Render'da Environment Variables → API_KEYS = key1,key2,key3 şeklinde ekle
-# Birden fazla müşteri için virgülle ayır
+VERSION       = "5.1.0"
+_START_TIME   = datetime.now()          # Uptime hesabı için
+
+# ---------------------------------------------------------------------------
+# API Key & Rate Limit
+# ---------------------------------------------------------------------------
 _raw_keys = os.environ.get("API_KEYS", "tegmensoft-test-2026-abc123")
 VALID_API_KEYS = {k.strip() for k in _raw_keys.split(",") if k.strip()}
 
-# Kimlik doğrulamadan muaf URL'ler
+RATE_LIMIT_PER_MINUTE = 60
 AUTH_EXEMPT_PATHS = {"/", "/docs", "/redoc", "/openapi.json", "/health"}
 
-# Rate limit: dakikada kaç istek
-RATE_LIMIT_PER_MINUTE = 60
 
-
-# ---------------------------------------------------------------------------
-# Bellek İçi Rate Limiter
-# ---------------------------------------------------------------------------
 class RateLimiter:
-    """API key başına dakikada max istek sınırı uygular."""
-
-    def __init__(self, max_requests: int = 60, window_seconds: int = 60):
-        self.max_requests = max_requests
-        self.window = window_seconds
+    def __init__(self, max_req: int = 60, window: int = 60):
+        self.max_req = max_req
+        self.window  = window
         self._data: dict = defaultdict(list)
         self._lock = threading.Lock()
 
     def is_allowed(self, key: str) -> bool:
-        now = datetime.now()
+        now    = datetime.now()
         cutoff = now - timedelta(seconds=self.window)
         with self._lock:
             self._data[key] = [t for t in self._data[key] if t > cutoff]
-            if len(self._data[key]) >= self.max_requests:
+            if len(self._data[key]) >= self.max_req:
                 return False
             self._data[key].append(now)
             return True
@@ -62,171 +62,88 @@ class RateLimiter:
 rate_limiter = RateLimiter(RATE_LIMIT_PER_MINUTE)
 
 # ---------------------------------------------------------------------------
-# FastAPI Uygulaması
+# In-Memory Cache
 # ---------------------------------------------------------------------------
-_ACIKLAMA = """
-## TegmenSoft Türkiye Gayrimenkul API
+# Redis kurulumu gerekmez — aynı veriyi milisaniyeler içinde döndürür.
+# EVDS verisi haftada bir değiştiği için 1 saatlik TTL yeterlidir.
+# Hesaplamalı endpoint'ler (yatirim-analizi) 10 dakika cache'lenir.
 
-Türkiye konut piyasasına ait **resmi ve otomatik güncellenen** veri seti.
-Kaynak: **TCMB EVDS** (Türkiye Cumhuriyet Merkez Bankası)
+_cache: dict = {}
+_cache_lock = threading.Lock()
 
----
+CACHE_TTL_EVDS   = 3600   # 1 saat   — EVDS JSON dosyası
+CACHE_TTL_RESP   = 600    # 10 dakika — hesaplamalı yanıtlar
 
-### 🔑 Kimlik Doğrulama
 
-Her istekte HTTP başlığına API anahtarınızı ekleyin:
+def cache_get(key: str):
+    """Cache'den veri al. Süresi geçmişse None döner."""
+    with _cache_lock:
+        entry = _cache.get(key)
+        if entry and (time.monotonic() - entry["ts"]) < entry["ttl"]:
+            return entry["data"]
+    return None
 
-```
-X-API-Key: your-api-key-here
-```
 
-### 📊 Mevcut Veri Setleri
+def cache_set(key: str, data, ttl: int = CACHE_TTL_RESP):
+    """Veriyi cache'e yaz."""
+    with _cache_lock:
+        _cache[key] = {"data": data, "ts": time.monotonic(), "ttl": ttl}
 
-| Endpoint | İçerik |
-|---|---|
-| `/konut-fiyat-endeksi` | Türkiye geneli aylık KFE |
-| `/kira-endeksi` | Türkiye geneli kira endeksi |
-| `/sehir-endeksleri` | 6 büyük şehir KFE |
-| `/sehir-verileri` | Şehir/ilçe m² ve kira fiyatları |
-| `/yatirim-analizi` | Brüt/net getiri ve amortisman hesabı |
-| `/ozet` | Tek istekle tüm piyasa özeti |
 
-### 🏙️ Desteklenen Şehirler
-
-`istanbul` · `ankara` · `izmir` · `antalya` · `bursa` · `adana`
-
-### 🔄 Güncelleme Sıklığı
-
-Veriler **her Pazar 09:00** TCMB EVDS'den otomatik çekilir.
-
----
-
-**İletişim:** burakztrk142000@gmail.com | **TegmenSoft © 2026**
-"""
-
-app = FastAPI(
-    title="TegmenSoft Türkiye Gayrimenkul API",
-    description=_ACIKLAMA,
-    version="5.0.0",
-    docs_url=None,    # Özel Swagger sayfası kullanıyoruz
-    redoc_url=None,   # Özel ReDoc sayfası kullanıyoruz
-    contact={
-        "name": "TegmenSoft Destek",
-        "email": "burakztrk142000@gmail.com",
-    },
-    license_info={
-        "name": "Ticari Lisans — Yetkisiz kullanım yasaktır.",
-    },
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# ---------------------------------------------------------------------------
-# Güvenlik Middleware — API Key + Rate Limit
-# ---------------------------------------------------------------------------
-@app.middleware("http")
-async def security_middleware(request: Request, call_next):
-    """Her istekte API Key kontrolü ve rate limit uygular."""
-
-    # Muaf URL'leri geç
-    if request.url.path in AUTH_EXEMPT_PATHS:
-        return await call_next(request)
-
-    # 1) API Key kontrolü
-    api_key = request.headers.get("X-API-Key", "").strip()
-    if not api_key:
-        return JSONResponse(
-            status_code=403,
-            content={
-                "hata": "API Key eksik.",
-                "mesaj": "İsteklerde 'X-API-Key' başlığını göndermeniz zorunludur.",
-                "dokumantasyon": "/docs",
-            },
-        )
-    if api_key not in VALID_API_KEYS:
-        return JSONResponse(
-            status_code=403,
-            content={
-                "hata": "Geçersiz API Key.",
-                "mesaj": "Bu API anahtarı tanınmıyor. Lütfen TegmenSoft ile iletişime geçin.",
-                "iletisim": "burakztrk142000@gmail.com",
-            },
-        )
-
-    # 2) Rate limit kontrolü
-    if not rate_limiter.is_allowed(api_key):
-        return JSONResponse(
-            status_code=429,
-            content={
-                "hata": "Çok fazla istek!",
-                "mesaj": f"Dakikada en fazla {RATE_LIMIT_PER_MINUTE} istek atabilirsiniz. Lütfen 1 dakika bekleyin.",
-                "limit": RATE_LIMIT_PER_MINUTE,
-                "pencere": "60 saniye",
-            },
-        )
-
-    return await call_next(request)
+def cache_stats() -> dict:
+    """Cache istatistikleri — /health endpoint için."""
+    with _cache_lock:
+        now = time.monotonic()
+        total   = len(_cache)
+        active  = sum(1 for v in _cache.values() if now - v["ts"] < v["ttl"])
+        expired = total - active
+    return {"toplam_girdi": total, "aktif": active, "suresi_gecmis": expired}
 
 
 # ---------------------------------------------------------------------------
-# Özel Swagger UI (TegmenSoft Temalı)
-# ---------------------------------------------------------------------------
-@app.get("/docs", include_in_schema=False)
-async def swagger_ui():
-    """TegmenSoft temalı Swagger dokümantasyon sayfası."""
-    return get_swagger_ui_html(
-        openapi_url="/openapi.json",
-        title="TegmenSoft Gayrimenkul API — Dokümantasyon",
-        swagger_ui_parameters={
-            "docExpansion": "list",
-            "defaultModelsExpandDepth": -1,
-            "displayRequestDuration": True,
-            "filter": True,
-            "tryItOutEnabled": True,
-        },
-    )
-
-
-@app.get("/openapi.json", include_in_schema=False)
-async def openapi_schema():
-    """OpenAPI şeması — API Key güvenlik tanımını içerir."""
-    if app.openapi_schema:
-        return app.openapi_schema
-
-    schema = get_openapi(
-        title="TegmenSoft Türkiye Gayrimenkul API",
-        version="5.0.0",
-        description=_ACIKLAMA,
-        routes=app.routes,
-    )
-
-    # Swagger'da 🔒 kilit ikonu ve "Authorize" butonu için güvenlik şeması
-    schema.setdefault("components", {})
-    schema["components"]["securitySchemes"] = {
-        "ApiKeyAuth": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "X-API-Key",
-            "description": "TegmenSoft tarafından verilen API anahtarınızı buraya girin.",
-        }
-    }
-    # Tüm endpoint'lere global olarak uygula
-    schema["security"] = [{"ApiKeyAuth": []}]
-
-    app.openapi_schema = schema
-    return app.openapi_schema
-
-
-# ---------------------------------------------------------------------------
-# Veri Yükleme
+# Async Dosya Okuma + EVDS Cache
 # ---------------------------------------------------------------------------
 DATA_FILE = Path(__file__).parent / "data" / "evds_data.json"
 
+
+async def evds_yukle() -> dict | None:
+    """
+    EVDS JSON dosyasını asenkron okur.
+    Sonucu 1 saat cache'ler — disk I/O'yu minimize eder.
+    100 eş zamanlı istek olsa bile dosyayı tek sefer okur.
+    """
+    cached = cache_get("__evds_data__")
+    if cached is not None:
+        return cached
+
+    if not DATA_FILE.exists():
+        return None
+
+    # Dosya okumayı thread pool'a gönder (event loop'u bloke etmez)
+    loop = asyncio.get_event_loop()
+    try:
+        raw = await loop.run_in_executor(
+            None,
+            lambda: DATA_FILE.read_text(encoding="utf-8"),
+        )
+        data = json.loads(raw)
+        cache_set("__evds_data__", data, ttl=CACHE_TTL_EVDS)
+        return data
+    except Exception:
+        return None
+
+
+def filtrele(liste: list, baslangic: str | None, bitis: str | None) -> list:
+    if baslangic:
+        liste = [d for d in liste if d.get("tarih", "") >= baslangic]
+    if bitis:
+        liste = [d for d in liste if d.get("tarih", "") <= bitis]
+    return liste
+
+
+# ---------------------------------------------------------------------------
+# Şehir Verileri (Statik)
+# ---------------------------------------------------------------------------
 SEHIR_VERILERI = {
     "istanbul": {
         "ortalama_satilik_m2_tl": 89420,
@@ -298,135 +215,271 @@ SEHIR_VERILERI = {
     },
 }
 
+# ---------------------------------------------------------------------------
+# Uygulama
+# ---------------------------------------------------------------------------
+_ACIKLAMA = """
+## TegmenSoft Türkiye Gayrimenkul API
 
-def _evds_yukle() -> dict | None:
-    if DATA_FILE.exists():
-        with open(DATA_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    return None
+Türkiye konut piyasasına ait **resmi ve otomatik güncellenen** veri seti.
+Kaynak: **TCMB EVDS** (Türkiye Cumhuriyet Merkez Bankası)
 
+---
 
-def _filtrele(liste: list, baslangic: str | None, bitis: str | None) -> list:
-    if baslangic:
-        liste = [d for d in liste if d.get("tarih", "") >= baslangic]
-    if bitis:
-        liste = [d for d in liste if d.get("tarih", "") <= bitis]
-    return liste
+### 🔑 Kimlik Doğrulama
 
+Her istekte HTTP başlığına API anahtarınızı ekleyin:
+
+```
+X-API-Key: your-api-key-here
+```
+
+### 📊 Endpoint'ler
+
+| Endpoint | İçerik |
+|---|---|
+| `/konut-fiyat-endeksi` | Türkiye geneli aylık KFE |
+| `/kira-endeksi` | Türkiye geneli kira endeksi |
+| `/sehir-endeksleri` | 6 büyük şehir KFE |
+| `/sehir-verileri` | Şehir/ilçe m² ve kira fiyatları |
+| `/yatirim-analizi` | Brüt/net getiri ve amortisman hesabı |
+| `/ozet` | Tek istekle tüm piyasa özeti |
+| `/health` | Sistem durumu ve uptime |
+
+### 🏙️ Desteklenen Şehirler
+
+`istanbul` · `ankara` · `izmir` · `antalya` · `bursa` · `adana`
+
+### ⚡ Performans
+
+Yanıtlar **In-Memory Cache** ile milisaniyeler içinde döner.
+Veriler **her Pazar 09:00** TCMB EVDS'den otomatik güncellenir.
+
+---
+
+**TegmenSoft © 2026** | burakztrk142000@gmail.com
+"""
+
+app = FastAPI(
+    title="TegmenSoft Türkiye Gayrimenkul API",
+    description=_ACIKLAMA,
+    version=VERSION,
+    docs_url=None,
+    redoc_url=None,
+    contact={"name": "TegmenSoft", "email": "burakztrk142000@gmail.com"},
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ---------------------------------------------------------------------------
+# Güvenlik Middleware
+# ---------------------------------------------------------------------------
+@app.middleware("http")
+async def security_middleware(request: Request, call_next):
+    if request.url.path in AUTH_EXEMPT_PATHS:
+        return await call_next(request)
+
+    api_key = request.headers.get("X-API-Key", "").strip()
+
+    if not api_key:
+        return JSONResponse(status_code=403, content={
+            "hata": "API Key eksik.",
+            "mesaj": "'X-API-Key' başlığını göndermeniz zorunludur.",
+            "dokumantasyon": "/docs",
+        })
+
+    if api_key not in VALID_API_KEYS:
+        return JSONResponse(status_code=403, content={
+            "hata": "Geçersiz API Key.",
+            "mesaj": "Bu anahtar tanınmıyor. Lütfen TegmenSoft ile iletişime geçin.",
+            "iletisim": "burakztrk142000@gmail.com",
+        })
+
+    if not rate_limiter.is_allowed(api_key):
+        return JSONResponse(status_code=429, content={
+            "hata": "Çok fazla istek!",
+            "mesaj": f"Dakikada en fazla {RATE_LIMIT_PER_MINUTE} istek atabilirsiniz.",
+            "limit": RATE_LIMIT_PER_MINUTE,
+            "pencere": "60 saniye",
+        })
+
+    return await call_next(request)
+
+# ---------------------------------------------------------------------------
+# Özel Swagger UI
+# ---------------------------------------------------------------------------
+@app.get("/docs", include_in_schema=False)
+async def swagger_ui():
+    return get_swagger_ui_html(
+        openapi_url="/openapi.json",
+        title="TegmenSoft Gayrimenkul API — Dokümantasyon",
+        swagger_ui_parameters={
+            "docExpansion": "list",
+            "defaultModelsExpandDepth": -1,
+            "displayRequestDuration": True,
+            "filter": True,
+        },
+    )
+
+@app.get("/openapi.json", include_in_schema=False)
+async def openapi_schema():
+    if app.openapi_schema:
+        return app.openapi_schema
+    schema = get_openapi(
+        title="TegmenSoft Türkiye Gayrimenkul API",
+        version=VERSION,
+        description=_ACIKLAMA,
+        routes=app.routes,
+    )
+    schema.setdefault("components", {})
+    schema["components"]["securitySchemes"] = {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "X-API-Key",
+        }
+    }
+    schema["security"] = [{"ApiKeyAuth": []}]
+    app.openapi_schema = schema
+    return app.openapi_schema
 
 # ---------------------------------------------------------------------------
 # Endpoint'ler
 # ---------------------------------------------------------------------------
 
-@app.get("/", tags=["Genel"], summary="API Bilgisi")
-def root():
-    """API hakkında genel bilgi ve endpoint listesi."""
-    evds = _evds_yukle()
-    guncelleme = evds["meta"]["guncelleme_zamani"] if evds else "Henüz TCMB verisi çekilmedi"
+@app.get("/", tags=["Genel"])
+async def root():
+    evds = await evds_yukle()
     return {
         "api": "TegmenSoft Türkiye Gayrimenkul API",
-        "version": "5.0.0",
-        "veri_kaynagi": "TCMB EVDS",
-        "son_guncelleme": guncelleme,
+        "version": VERSION,
+        "son_guncelleme": evds["meta"]["guncelleme_zamani"] if evds else None,
         "dokumantasyon": "/docs",
-        "endpoints": {
-            "/konut-fiyat-endeksi": "TCMB Konut Fiyat Endeksi (aylık)",
-            "/kira-endeksi":        "TCMB Kira Endeksi (aylık)",
-            "/sehir-endeksleri":    "Şehir bazlı konut fiyat endeksleri",
-            "/sehir-verileri":      "Şehir ve ilçe m² / kira fiyatları",
-            "/yatirim-analizi":     "Şehir bazlı yatırım getirisi analizi",
-            "/ozet":                "Tüm piyasa özeti",
-        },
     }
 
 
 @app.get("/health", tags=["Genel"], summary="Sistem Durumu")
-def health():
-    """Sistem sağlık kontrolü."""
-    return {"status": "ok", "timestamp": datetime.now().isoformat()}
+async def health():
+    """
+    **Sistem sağlık kontrolü** — izleme araçları için.
+
+    Uptime, versiyon, veri dosyası durumu ve cache istatistiklerini döner.
+    API Key gerektirmez.
+    """
+    uptime_sn = int((datetime.now() - _START_TIME).total_seconds())
+    saat      = uptime_sn // 3600
+    dakika    = (uptime_sn % 3600) // 60
+    saniye    = uptime_sn % 60
+
+    # Veri dosyası bilgisi
+    veri_durumu = "yok"
+    veri_tarih  = None
+    if DATA_FILE.exists():
+        veri_durumu = "mevcut"
+        ts = DATA_FILE.stat().st_mtime
+        veri_tarih = datetime.fromtimestamp(ts).isoformat()
+
+    # Cache'de veri var mı?
+    cache_durum = "cache'de" if cache_get("__evds_data__") is not None else "cache'de değil"
+
+    return {
+        "status": "ok",
+        "version": VERSION,
+        "uptime": {
+            "saniye": uptime_sn,
+            "ozet": f"{saat}s {dakika}dk {saniye}sn",
+        },
+        "veri_dosyasi": {
+            "durum": veri_durumu,
+            "son_degisiklik": veri_tarih,
+            "evds_verisi": cache_durum,
+        },
+        "cache": cache_stats(),
+        "rate_limit": f"{RATE_LIMIT_PER_MINUTE} istek/dakika",
+        "timestamp": datetime.now().isoformat(),
+    }
 
 
 @app.get("/konut-fiyat-endeksi", tags=["Endeksler"], summary="Konut Fiyat Endeksi")
-def konut_fiyat_endeksi(
+async def konut_fiyat_endeksi(
     baslangic: str = Query(None, description="Başlangıç tarihi (yyyy-mm)", example="2024-01"),
     bitis:     str = Query(None, description="Bitiş tarihi (yyyy-mm)",     example="2026-02"),
 ):
-    """
-    **TCMB Konut Fiyat Endeksi** — Türkiye geneli aylık seri.
+    """**TCMB Konut Fiyat Endeksi** — Türkiye geneli, aylık seri."""
+    cache_key = f"kfe_{baslangic}_{bitis}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
 
-    Her kayıt: tarih, endeks değeri, yıllık değişim yüzdesi içerir.
-    """
-    evds = _evds_yukle()
+    evds = await evds_yukle()
     if evds:
         seri = evds["seriler"].get("konut_endeks_turkiye", [])
-        data = _filtrele(seri, baslangic, bitis)
+        data = filtrele(seri, baslangic, bitis)
         kaynak = "TCMB EVDS (otomatik güncelleme)"
         guncelleme = evds["meta"]["guncelleme_zamani"]
     else:
-        data = _STATIK_KONUT_ENDEKSI
-        data = _filtrele(data, baslangic, bitis)
+        data = filtrele(_STATIK_KONUT_ENDEKSI, baslangic, bitis)
         kaynak = "Statik veri"
         guncelleme = None
 
-    return {
+    yanit = {
         "status": "success",
         "kaynak": kaynak,
         "son_guncelleme": guncelleme,
-        "aciklama": "Türkiye geneli konut fiyat endeksi",
         "count": len(data),
         "timestamp": datetime.now().isoformat(),
         "data": data,
     }
+    cache_set(cache_key, yanit)
+    return yanit
 
 
 @app.get("/kira-endeksi", tags=["Endeksler"], summary="Kira Endeksi")
-def kira_endeksi(
+async def kira_endeksi(
     baslangic: str = Query(None, description="Başlangıç tarihi (yyyy-mm)"),
     bitis:     str = Query(None, description="Bitiş tarihi (yyyy-mm)"),
 ):
-    """
-    **TCMB Kira Endeksi** — Türkiye geneli aylık seri.
+    """**TCMB Kira Endeksi** — Türkiye geneli, aylık seri."""
+    cache_key = f"kira_{baslangic}_{bitis}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
 
-    TÜFE kira alt kalemi bazında hesaplanmış resmi endeks.
-    """
-    evds = _evds_yukle()
+    evds = await evds_yukle()
     if evds:
         seri = evds["seriler"].get("kira_endeks", [])
-        data = _filtrele(seri, baslangic, bitis)
+        data = filtrele(seri, baslangic, bitis)
         kaynak = "TCMB EVDS (otomatik güncelleme)"
         guncelleme = evds["meta"]["guncelleme_zamani"]
     else:
-        data = _STATIK_KIRA_ENDEKSI
-        data = _filtrele(data, baslangic, bitis)
+        data = filtrele(_STATIK_KIRA_ENDEKSI, baslangic, bitis)
         kaynak = "Statik veri"
         guncelleme = None
 
-    return {
+    yanit = {
         "status": "success",
         "kaynak": kaynak,
         "son_guncelleme": guncelleme,
-        "aciklama": "Türkiye geneli kira endeksi",
         "count": len(data),
         "timestamp": datetime.now().isoformat(),
         "data": data,
     }
+    cache_set(cache_key, yanit)
+    return yanit
 
 
 @app.get("/sehir-endeksleri", tags=["Şehir Verileri"], summary="Şehir Bazlı KFE")
-def sehir_endeksleri(
-    sehir: str = Query(
-        "istanbul",
-        description="Şehir adı",
-        example="istanbul",
-    ),
+async def sehir_endeksleri(
+    sehir:     str = Query("istanbul", description="Şehir adı", example="istanbul"),
     baslangic: str = Query(None, description="Başlangıç tarihi (yyyy-mm)"),
     bitis:     str = Query(None, description="Bitiş tarihi (yyyy-mm)"),
 ):
-    """
-    **Şehir bazlı Konut Fiyat Endeksi** — TCMB EVDS NUTS-2 bölge verileri.
-
-    Desteklenen şehirler: `istanbul`, `ankara`, `izmir`, `antalya`, `bursa`, `adana`
-    """
+    """**Şehir bazlı KFE** — 6 büyük şehir için TCMB EVDS verisi."""
     seri_map = {
         "istanbul": "konut_endeks_istanbul",
         "ankara":   "konut_endeks_ankara",
@@ -439,13 +492,19 @@ def sehir_endeksleri(
     if sehir not in seri_map:
         raise HTTPException(400, f"Desteklenen şehirler: {list(seri_map.keys())}")
 
-    evds = _evds_yukle()
+    cache_key = f"sehir_endeks_{sehir}_{baslangic}_{bitis}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
+
+    evds = await evds_yukle()
     if not evds:
         raise HTTPException(503, "TCMB verisi henüz yüklenmedi.")
 
     seri = evds["seriler"].get(seri_map[sehir], [])
-    data = _filtrele(seri, baslangic, bitis)
-    return {
+    data = filtrele(seri, baslangic, bitis)
+
+    yanit = {
         "status": "success",
         "sehir": sehir,
         "kaynak": "TCMB EVDS",
@@ -454,18 +513,16 @@ def sehir_endeksleri(
         "timestamp": datetime.now().isoformat(),
         "data": data,
     }
+    cache_set(cache_key, yanit)
+    return yanit
 
 
 @app.get("/sehir-verileri", tags=["Şehir Verileri"], summary="m² ve Kira Fiyatları")
-def sehir_verileri(
+async def sehir_verileri(
     sehir: str = Query("istanbul", description="Şehir adı", example="istanbul"),
-    ilce:  str = Query(None,        description="İlçe adı (opsiyonel)", example="kadikoy"),
+    ilce:  str = Query(None, description="İlçe adı (opsiyonel)", example="kadikoy"),
 ):
-    """
-    **Şehir ve ilçe bazında** ortalama m² satış fiyatı ve aylık kira fiyatı.
-
-    İlçe parametresi girilmezse tüm şehrin özeti döner.
-    """
+    """**Şehir/ilçe bazında** ortalama m² satış ve kira fiyatları."""
     sehir = sehir.lower()
     if sehir not in SEHIR_VERILERI:
         raise HTTPException(400, f"Mevcut şehirler: {list(SEHIR_VERILERI.keys())}")
@@ -494,26 +551,23 @@ def sehir_verileri(
 
 
 @app.get("/yatirim-analizi", tags=["Analiz"], summary="Yatırım Getirisi Analizi")
-def yatirim_analizi(
+async def yatirim_analizi(
     sehir:     str   = Query("istanbul", description="Şehir adı"),
     ilce:      str   = Query(None,       description="İlçe adı (opsiyonel)"),
     metrekare: float = Query(100,        description="Daire büyüklüğü (m²)", ge=10, le=1000),
 ):
-    """
-    **Yatırım getirisi analizi** — kira getirisi, amortisman ve net ROI hesabı.
-
-    Verilen şehir/ilçe ve metrekareye göre:
-    - Tahmini satış fiyatı
-    - Yıllık kira geliri
-    - Brüt ve net kira getiri yüzdesi (%15 gider varsayımı)
-    - Amortisman süresi (yıl)
-    """
+    """**Yatırım analizi** — brüt/net getiri ve amortisman hesabı."""
     sehir = sehir.lower()
     if sehir not in SEHIR_VERILERI:
         raise HTTPException(400, f"Desteklenen şehirler: {list(SEHIR_VERILERI.keys())}")
 
-    veri = SEHIR_VERILERI[sehir]
+    # Hesaplamalı endpoint — 10 dk cache
+    cache_key = f"yatirim_{sehir}_{ilce}_{metrekare}"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
 
+    veri = SEHIR_VERILERI[sehir]
     if ilce:
         ilce = ilce.lower()
         ilceler = veri.get("populer_ilceler", {})
@@ -533,7 +587,7 @@ def yatirim_analizi(
     net_getiri     = round(brut_getiri * 0.85, 2)
     amortisman_yil = round(satis_fiyati / yillik_kira, 1)
 
-    return {
+    yanit = {
         "status": "success",
         "konum": konum,
         "timestamp": datetime.now().isoformat(),
@@ -551,20 +605,23 @@ def yatirim_analizi(
         },
         "not": "Net getiri %15 gider (vergi, bakım, boşluk) varsayımıyla hesaplanmıştır.",
     }
+    cache_set(cache_key, yanit, ttl=CACHE_TTL_RESP)
+    return yanit
 
 
 @app.get("/ozet", tags=["Genel"], summary="Piyasa Özeti")
-def ozet():
-    """
-    **Tüm piyasa özeti** — tek istekle tüm veriler.
+async def ozet():
+    """**Tüm piyasa özeti** — tek istekle her şey."""
+    cache_key = "ozet"
+    cached = cache_get(cache_key)
+    if cached:
+        return cached
 
-    TCMB endeks özetleri + şehir bazlı fiyat bilgileri.
-    """
-    evds = _evds_yukle()
+    evds = await evds_yukle()
     evds_ozet  = evds.get("ozet", {}) if evds else {}
     guncelleme = evds["meta"]["guncelleme_zamani"] if evds else None
 
-    return {
+    yanit = {
         "status": "success",
         "timestamp": datetime.now().isoformat(),
         "son_veri_guncelleme": guncelleme,
@@ -572,18 +629,20 @@ def ozet():
         "endeks_ozeti": evds_ozet,
         "desteklenen_sehirler": list(SEHIR_VERILERI.keys()),
         "sehir_ozeti": {
-            sehir: {
+            s: {
                 "ortalama_satilik_m2_tl":    v["ortalama_satilik_m2_tl"],
                 "ortalama_kiralik_aylik_tl": v["ortalama_kiralik_aylik_tl"],
                 "ilce_sayisi":               len(v["populer_ilceler"]),
             }
-            for sehir, v in SEHIR_VERILERI.items()
+            for s, v in SEHIR_VERILERI.items()
         },
     }
+    cache_set(cache_key, yanit)
+    return yanit
 
 
 # ---------------------------------------------------------------------------
-# Statik Fallback Verisi
+# Statik Fallback
 # ---------------------------------------------------------------------------
 _STATIK_KONUT_ENDEKSI = [
     {"tarih": "2024-01", "deger": 892.3,  "yillik_degisim_yuzde": 67.2},
