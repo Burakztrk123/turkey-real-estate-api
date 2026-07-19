@@ -1,45 +1,45 @@
 {
   "meta": {
-    "guncelleme_zamani": "2026-07-12T06:06:16.522183",
+    "guncelleme_zamani": "2026-07-19T05:56:28.197177",
     "veri_kaynagi": "TCMB EVDS3",
     "kaynak_url": "https://evds3.tcmb.gov.tr",
-    "donem": "28-07-2023 - 12-07-2026"
+    "donem": "04-08-2023 - 19-07-2026"
   },
   "ozet": {
     "konut_endeks_turkiye": {
-      "son_tarih": "2026-05",
-      "son_deger": 227.08,
-      "yillik_degisim_yuzde": 24.54
+      "son_tarih": "2026-06",
+      "son_deger": 231.46,
+      "yillik_degisim_yuzde": 24.47
     },
     "konut_endeks_istanbul": {
-      "son_tarih": "2026-05",
-      "son_deger": 212.62,
-      "yillik_degisim_yuzde": 25.42
+      "son_tarih": "2026-06",
+      "son_deger": 216.92,
+      "yillik_degisim_yuzde": 25.29
     },
     "konut_endeks_ankara": {
-      "son_tarih": "2026-05",
-      "son_deger": 253.23,
-      "yillik_degisim_yuzde": 27.3
+      "son_tarih": "2026-06",
+      "son_deger": 255.52,
+      "yillik_degisim_yuzde": 25.48
     },
     "konut_endeks_izmir": {
-      "son_tarih": "2026-05",
-      "son_deger": 218.35,
-      "yillik_degisim_yuzde": 22.83
+      "son_tarih": "2026-06",
+      "son_deger": 225.16,
+      "yillik_degisim_yuzde": 22.62
     },
     "konut_endeks_antalya": {
-      "son_tarih": "2026-05",
-      "son_deger": 193.41,
-      "yillik_degisim_yuzde": 24.3
+      "son_tarih": "2026-06",
+      "son_deger": 194.31,
+      "yillik_degisim_yuzde": 22.08
     },
     "konut_endeks_bursa": {
-      "son_tarih": "2026-05",
-      "son_deger": 224.09,
-      "yillik_degisim_yuzde": 22.22
+      "son_tarih": "2026-06",
+      "son_deger": 227.9,
+      "yillik_degisim_yuzde": 24.52
     },
     "konut_endeks_adana": {
-      "son_tarih": "2026-05",
-      "son_deger": 203.74,
-      "yillik_degisim_yuzde": 18.79
+      "son_tarih": "2026-06",
+      "son_deger": 212.18,
+      "yillik_degisim_yuzde": 21.02
     },
     "kira_endeks": {
       "son_tarih": "2026-01",
@@ -49,11 +49,6 @@
   },
   "seriler": {
     "konut_endeks_turkiye": [
-      {
-        "tarih": "2023-07",
-        "deger": 101.87,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-08",
         "deger": 108.97,
@@ -112,7 +107,7 @@
       {
         "tarih": "2024-07",
         "deger": 141.33,
-        "yillik_degisim_yuzde": 38.74
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-08",
@@ -221,16 +216,16 @@
       },
       {
         "tarih": "2026-05",
-        "deger": 227.08,
-        "yillik_degisim_yuzde": 24.54
+        "deger": 226.99,
+        "yillik_degisim_yuzde": 24.49
+      },
+      {
+        "tarih": "2026-06",
+        "deger": 231.46,
+        "yillik_degisim_yuzde": 24.47
       }
     ],
     "konut_endeks_istanbul": [
-      {
-        "tarih": "2023-07",
-        "deger": 102.85,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-08",
         "deger": 108.24,
@@ -289,7 +284,7 @@
       {
         "tarih": "2024-07",
         "deger": 130.43,
-        "yillik_degisim_yuzde": 26.82
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-08",
@@ -398,16 +393,16 @@
       },
       {
         "tarih": "2026-05",
-        "deger": 212.62,
-        "yillik_degisim_yuzde": 25.42
+        "deger": 212.47,
+        "yillik_degisim_yuzde": 25.34
+      },
+      {
+        "tarih": "2026-06",
+        "deger": 216.92,
+        "yillik_degisim_yuzde": 25.29
       }
     ],
     "konut_endeks_ankara": [
-      {
-        "tarih": "2023-07",
-        "deger": 103.32,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-08",
         "deger": 110.9,
@@ -466,7 +461,7 @@
       {
         "tarih": "2024-07",
         "deger": 144.22,
-        "yillik_degisim_yuzde": 39.59
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-08",
@@ -575,16 +570,16 @@
       },
       {
         "tarih": "2026-05",
-        "deger": 253.23,
-        "yillik_degisim_yuzde": 27.3
+        "deger": 252.96,
+        "yillik_degisim_yuzde": 27.17
+      },
+      {
+        "tarih": "2026-06",
+        "deger": 255.52,
+        "yillik_degisim_yuzde": 25.48
       }
     ],
     "konut_endeks_izmir": [
-      {
-        "tarih": "2023-07",
-        "deger": 101.32,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-08",
         "deger": 106.85,
@@ -643,7 +638,7 @@
       {
         "tarih": "2024-07",
         "deger": 138.75,
-        "yillik_degisim_yuzde": 36.94
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-08",
@@ -752,16 +747,16 @@
       },
       {
         "tarih": "2026-05",
-        "deger": 218.35,
-        "yillik_degisim_yuzde": 22.83
+        "deger": 218.44,
+        "yillik_degisim_yuzde": 22.88
+      },
+      {
+        "tarih": "2026-06",
+        "deger": 225.16,
+        "yillik_degisim_yuzde": 22.62
       }
     ],
     "konut_endeks_antalya": [
-      {
-        "tarih": "2023-07",
-        "deger": 101.59,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-08",
         "deger": 109.2,
@@ -820,7 +815,7 @@
       {
         "tarih": "2024-07",
         "deger": 132.11,
-        "yillik_degisim_yuzde": 30.04
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-08",
@@ -929,16 +924,16 @@
       },
       {
         "tarih": "2026-05",
-        "deger": 193.41,
-        "yillik_degisim_yuzde": 24.3
+        "deger": 192.96,
+        "yillik_degisim_yuzde": 24.01
+      },
+      {
+        "tarih": "2026-06",
+        "deger": 194.31,
+        "yillik_degisim_yuzde": 22.08
       }
     ],
     "konut_endeks_bursa": [
-      {
-        "tarih": "2023-07",
-        "deger": 102.25,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-08",
         "deger": 110.47,
@@ -997,7 +992,7 @@
       {
         "tarih": "2024-07",
         "deger": 140.69,
-        "yillik_degisim_yuzde": 37.59
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-08",
@@ -1106,16 +1101,16 @@
       },
       {
         "tarih": "2026-05",
-        "deger": 224.09,
-        "yillik_degisim_yuzde": 22.22
+        "deger": 224.14,
+        "yillik_degisim_yuzde": 22.25
+      },
+      {
+        "tarih": "2026-06",
+        "deger": 227.9,
+        "yillik_degisim_yuzde": 24.52
       }
     ],
     "konut_endeks_adana": [
-      {
-        "tarih": "2023-07",
-        "deger": 103.02,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-08",
         "deger": 107.27,
@@ -1174,7 +1169,7 @@
       {
         "tarih": "2024-07",
         "deger": 134.02,
-        "yillik_degisim_yuzde": 30.09
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-08",
@@ -1283,16 +1278,16 @@
       },
       {
         "tarih": "2026-05",
-        "deger": 203.74,
-        "yillik_degisim_yuzde": 18.79
+        "deger": 203.46,
+        "yillik_degisim_yuzde": 18.63
+      },
+      {
+        "tarih": "2026-06",
+        "deger": 212.18,
+        "yillik_degisim_yuzde": 21.02
       }
     ],
     "kira_endeks": [
-      {
-        "tarih": "2023-07",
-        "deger": 1479.84,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-08",
         "deger": 1614.31,
@@ -1351,7 +1346,7 @@
       {
         "tarih": "2024-07",
         "deger": 2394.1,
-        "yillik_degisim_yuzde": 61.78
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-08",
