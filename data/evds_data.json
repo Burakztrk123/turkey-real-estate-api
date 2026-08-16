@@ -1,9 +1,9 @@
 {
   "meta": {
-    "guncelleme_zamani": "2026-08-09T04:18:55.286485",
+    "guncelleme_zamani": "2026-08-16T03:50:09.102644",
     "veri_kaynagi": "TCMB EVDS3",
     "kaynak_url": "https://evds3.tcmb.gov.tr",
-    "donem": "25-08-2023 - 09-08-2026"
+    "donem": "01-09-2023 - 16-08-2026"
   },
   "ozet": {
     "konut_endeks_turkiye": {
@@ -49,11 +49,6 @@
   },
   "seriler": {
     "konut_endeks_turkiye": [
-      {
-        "tarih": "2023-08",
-        "deger": 108.97,
-        "yillik_degisim_yuzde": null
-      },
       {
         "tarih": "2023-09",
         "deger": 116.18,
@@ -112,7 +107,7 @@
       {
         "tarih": "2024-08",
         "deger": 146.5,
-        "yillik_degisim_yuzde": 34.44
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-09",
@@ -227,11 +222,6 @@
     ],
     "konut_endeks_istanbul": [
       {
-        "tarih": "2023-08",
-        "deger": 108.24,
-        "yillik_degisim_yuzde": null
-      },
-      {
         "tarih": "2023-09",
         "deger": 112.98,
         "yillik_degisim_yuzde": null
@@ -289,7 +279,7 @@
       {
         "tarih": "2024-08",
         "deger": 137.79,
-        "yillik_degisim_yuzde": 27.3
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-09",
@@ -404,11 +394,6 @@
     ],
     "konut_endeks_ankara": [
       {
-        "tarih": "2023-08",
-        "deger": 110.9,
-        "yillik_degisim_yuzde": null
-      },
-      {
         "tarih": "2023-09",
         "deger": 117.82,
         "yillik_degisim_yuzde": null
@@ -466,7 +451,7 @@
       {
         "tarih": "2024-08",
         "deger": 150.39,
-        "yillik_degisim_yuzde": 35.61
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-09",
@@ -581,11 +566,6 @@
     ],
     "konut_endeks_izmir": [
       {
-        "tarih": "2023-08",
-        "deger": 106.85,
-        "yillik_degisim_yuzde": null
-      },
-      {
         "tarih": "2023-09",
         "deger": 115.76,
         "yillik_degisim_yuzde": null
@@ -643,7 +623,7 @@
       {
         "tarih": "2024-08",
         "deger": 141.44,
-        "yillik_degisim_yuzde": 32.37
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-09",
@@ -758,11 +738,6 @@
     ],
     "konut_endeks_antalya": [
       {
-        "tarih": "2023-08",
-        "deger": 109.2,
-        "yillik_degisim_yuzde": null
-      },
-      {
         "tarih": "2023-09",
         "deger": 115.77,
         "yillik_degisim_yuzde": null
@@ -820,7 +795,7 @@
       {
         "tarih": "2024-08",
         "deger": 132.02,
-        "yillik_degisim_yuzde": 20.9
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-09",
@@ -935,11 +910,6 @@
     ],
     "konut_endeks_bursa": [
       {
-        "tarih": "2023-08",
-        "deger": 110.47,
-        "yillik_degisim_yuzde": null
-      },
-      {
         "tarih": "2023-09",
         "deger": 116.34,
         "yillik_degisim_yuzde": null
@@ -997,7 +967,7 @@
       {
         "tarih": "2024-08",
         "deger": 146.89,
-        "yillik_degisim_yuzde": 32.97
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-09",
@@ -1112,11 +1082,6 @@
     ],
     "konut_endeks_adana": [
       {
-        "tarih": "2023-08",
-        "deger": 107.27,
-        "yillik_degisim_yuzde": null
-      },
-      {
         "tarih": "2023-09",
         "deger": 114.23,
         "yillik_degisim_yuzde": null
@@ -1174,7 +1139,7 @@
       {
         "tarih": "2024-08",
         "deger": 137.89,
-        "yillik_degisim_yuzde": 28.54
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-09",
@@ -1289,11 +1254,6 @@
     ],
     "kira_endeks": [
       {
-        "tarih": "2023-08",
-        "deger": 1614.31,
-        "yillik_degisim_yuzde": null
-      },
-      {
         "tarih": "2023-09",
         "deger": 1691.04,
         "yillik_degisim_yuzde": null
@@ -1351,7 +1311,7 @@
       {
         "tarih": "2024-08",
         "deger": 2453.34,
-        "yillik_degisim_yuzde": 51.97
+        "yillik_degisim_yuzde": null
       },
       {
         "tarih": "2024-09",
