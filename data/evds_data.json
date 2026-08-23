@@ -1,45 +1,45 @@
 {
   "meta": {
-    "guncelleme_zamani": "2026-08-16T03:50:09.102644",
+    "guncelleme_zamani": "2026-08-23T03:52:01.540520",
     "veri_kaynagi": "TCMB EVDS3",
     "kaynak_url": "https://evds3.tcmb.gov.tr",
-    "donem": "01-09-2023 - 16-08-2026"
+    "donem": "08-09-2023 - 23-08-2026"
   },
   "ozet": {
     "konut_endeks_turkiye": {
-      "son_tarih": "2026-06",
-      "son_deger": 231.46,
-      "yillik_degisim_yuzde": 24.47
+      "son_tarih": "2026-07",
+      "son_deger": 234.76,
+      "yillik_degisim_yuzde": 25.02
     },
     "konut_endeks_istanbul": {
-      "son_tarih": "2026-06",
-      "son_deger": 216.92,
-      "yillik_degisim_yuzde": 25.29
+      "son_tarih": "2026-07",
+      "son_deger": 222.5,
+      "yillik_degisim_yuzde": 27.75
     },
     "konut_endeks_ankara": {
-      "son_tarih": "2026-06",
-      "son_deger": 255.52,
-      "yillik_degisim_yuzde": 25.48
+      "son_tarih": "2026-07",
+      "son_deger": 261.34,
+      "yillik_degisim_yuzde": 26.64
     },
     "konut_endeks_izmir": {
-      "son_tarih": "2026-06",
-      "son_deger": 225.16,
-      "yillik_degisim_yuzde": 22.62
+      "son_tarih": "2026-07",
+      "son_deger": 224.02,
+      "yillik_degisim_yuzde": 23.14
     },
     "konut_endeks_antalya": {
-      "son_tarih": "2026-06",
-      "son_deger": 194.31,
-      "yillik_degisim_yuzde": 22.08
+      "son_tarih": "2026-07",
+      "son_deger": 195.03,
+      "yillik_degisim_yuzde": 23.55
     },
     "konut_endeks_bursa": {
-      "son_tarih": "2026-06",
-      "son_deger": 227.9,
-      "yillik_degisim_yuzde": 24.52
+      "son_tarih": "2026-07",
+      "son_deger": 229.16,
+      "yillik_degisim_yuzde": 22.57
     },
     "konut_endeks_adana": {
-      "son_tarih": "2026-06",
-      "son_deger": 212.18,
-      "yillik_degisim_yuzde": 21.02
+      "son_tarih": "2026-07",
+      "son_deger": 216.33,
+      "yillik_degisim_yuzde": 25.5
     },
     "kira_endeks": {
       "son_tarih": "2026-01",
@@ -216,8 +216,13 @@
       },
       {
         "tarih": "2026-06",
-        "deger": 231.46,
-        "yillik_degisim_yuzde": 24.47
+        "deger": 231.34,
+        "yillik_degisim_yuzde": 24.4
+      },
+      {
+        "tarih": "2026-07",
+        "deger": 234.76,
+        "yillik_degisim_yuzde": 25.02
       }
     ],
     "konut_endeks_istanbul": [
@@ -388,8 +393,13 @@
       },
       {
         "tarih": "2026-06",
-        "deger": 216.92,
-        "yillik_degisim_yuzde": 25.29
+        "deger": 216.62,
+        "yillik_degisim_yuzde": 25.12
+      },
+      {
+        "tarih": "2026-07",
+        "deger": 222.5,
+        "yillik_degisim_yuzde": 27.75
       }
     ],
     "konut_endeks_ankara": [
@@ -560,8 +570,13 @@
       },
       {
         "tarih": "2026-06",
-        "deger": 255.52,
-        "yillik_degisim_yuzde": 25.48
+        "deger": 255.69,
+        "yillik_degisim_yuzde": 25.56
+      },
+      {
+        "tarih": "2026-07",
+        "deger": 261.34,
+        "yillik_degisim_yuzde": 26.64
       }
     ],
     "konut_endeks_izmir": [
@@ -734,6 +749,11 @@
         "tarih": "2026-06",
         "deger": 225.16,
         "yillik_degisim_yuzde": 22.62
+      },
+      {
+        "tarih": "2026-07",
+        "deger": 224.02,
+        "yillik_degisim_yuzde": 23.14
       }
     ],
     "konut_endeks_antalya": [
@@ -904,8 +924,13 @@
       },
       {
         "tarih": "2026-06",
-        "deger": 194.31,
-        "yillik_degisim_yuzde": 22.08
+        "deger": 194.13,
+        "yillik_degisim_yuzde": 21.97
+      },
+      {
+        "tarih": "2026-07",
+        "deger": 195.03,
+        "yillik_degisim_yuzde": 23.55
       }
     ],
     "konut_endeks_bursa": [
@@ -1076,8 +1101,13 @@
       },
       {
         "tarih": "2026-06",
-        "deger": 227.9,
-        "yillik_degisim_yuzde": 24.52
+        "deger": 227.71,
+        "yillik_degisim_yuzde": 24.42
+      },
+      {
+        "tarih": "2026-07",
+        "deger": 229.16,
+        "yillik_degisim_yuzde": 22.57
       }
     ],
     "konut_endeks_adana": [
@@ -1248,8 +1278,13 @@
       },
       {
         "tarih": "2026-06",
-        "deger": 212.18,
-        "yillik_degisim_yuzde": 21.02
+        "deger": 212.46,
+        "yillik_degisim_yuzde": 21.18
+      },
+      {
+        "tarih": "2026-07",
+        "deger": 216.33,
+        "yillik_degisim_yuzde": 25.5
       }
     ],
     "kira_endeks": [
